@@ -382,9 +382,10 @@
     .word-bubble .remaining { opacity: 1; }
     .word-bubble .cursor-char { text-decoration: underline; text-underline-offset: 4px; }
     .word-bubble .word-def {
-      display: block; font-family: 'Nunito', sans-serif; font-size: 0.65rem;
-      font-weight: 400; letter-spacing: 0.5px; opacity: 0.6;
-      margin-top: 2px; text-align: center; white-space: nowrap;
+      display: block; font-family: 'Nunito', sans-serif; font-size: 0.85rem;
+      font-weight: 700; letter-spacing: 0.5px; opacity: 0.75;
+      margin-top: 4px; text-align: center; white-space: nowrap;
+      color: rgba(255,255,200,0.85); font-style: italic;
     }
 
     .wp-input-area {
@@ -2598,8 +2599,8 @@ const WP_SETTINGS = {
   intermediate: { speed:0.65, spawnRate:2600, maxWords:5, lives:4 },
   advanced: { speed:0.85, spawnRate:2000, maxWords:6, lives:4 },
   expert: { speed:1.1, spawnRate:1500, maxWords:7, lives:3 },
-  sat: { speed:0.55, spawnRate:2800, maxWords:5, lives:4 },
-  gre: { speed:0.50, spawnRate:3000, maxWords:4, lives:4 },
+  sat: { speed:0.30, spawnRate:4000, maxWords:3, lives:5, noAccel:true },
+  gre: { speed:0.28, spawnRate:4500, maxWords:3, lives:5, noAccel:true },
 };
 const COMBO_MSG = ['','','Nice!','Great!','Awesome!','Amazing!','Fantastic!','Incredible!','Legendary!','UNSTOPPABLE!'];
 const COMBO_CLR = ['','','#6bff6b','#6bfffc','#f9ed69','#ffb974','#ff6b8a','#d084f7','#ff2e63','#ff2e63'];
@@ -2662,7 +2663,7 @@ function spawnWpWord() {
   el.innerHTML = `<span class="remaining">${text}</span>${def ? '<span class="word-def">' + def + '</span>' : ''}`;
   const x = 30 + Math.random() * (rect.width - 180);
   el.style.left = x + 'px'; el.style.top = '-55px'; area.appendChild(el);
-  const speed = wp.settings.speed * (1 + (wp.level - 1) * 0.1);
+  const speed = wp.settings.noAccel ? wp.settings.speed : wp.settings.speed * (1 + (wp.level - 1) * 0.1);
   wp.words.push({ text, def, typed:0, el, x, y:-55, speed: speed*(0.85+Math.random()*0.3), color, active:false });
 }
 
@@ -2712,7 +2713,8 @@ function completeWpWord(w) {
     const d = document.createElement('div'); d.className = 'level-banner';
     d.textContent = `Level ${wp.level}!`; document.body.appendChild(d); setTimeout(() => d.remove(), 1200);
     clearInterval(wp.spawnTimer);
-    wp.spawnTimer = setInterval(spawnWpWord, Math.max(700, wp.settings.spawnRate - (wp.level-1)*120));
+    const newRate = wp.settings.noAccel ? wp.settings.spawnRate : Math.max(700, wp.settings.spawnRate - (wp.level-1)*120);
+    wp.spawnTimer = setInterval(spawnWpWord, newRate);
   }
   updateWpHUD(); $('wp-type-input').value = '';
 }
