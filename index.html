@@ -1096,7 +1096,40 @@ function playTone(freq, dur, type = 'sine', vol = 0.1) {
 }
 function playPop(f=600) { playTone(f, 0.12, 'sine', 0.12); }
 function playMiss() { playTone(150, 0.25, 'sawtooth', 0.08); }
-function playTap() { playTone(800 + Math.random()*200, 0.035, 'sine', 0.025); }
+function playTap() {
+  ensureAudio();
+  const now = audioCtx.currentTime;
+  // Layer 1: sharp click transient
+  const o1 = audioCtx.createOscillator(), g1 = audioCtx.createGain();
+  o1.type = 'square';
+  o1.frequency.setValueAtTime(1800 + Math.random() * 600, now);
+  o1.frequency.exponentialRampToValueAtTime(400, now + 0.015);
+  g1.gain.setValueAtTime(0.12, now);
+  g1.gain.exponentialRampToValueAtTime(0.001, now + 0.025);
+  o1.connect(g1).connect(audioCtx.destination);
+  o1.start(now); o1.stop(now + 0.03);
+  // Layer 2: short noise burst for realistic click body
+  const bufLen = audioCtx.sampleRate * 0.02;
+  const buf = audioCtx.createBuffer(1, bufLen, audioCtx.sampleRate);
+  const data = buf.getChannelData(0);
+  for (let i = 0; i < bufLen; i++) data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufLen * 0.15));
+  const noise = audioCtx.createBufferSource();
+  noise.buffer = buf;
+  const nGain = audioCtx.createGain();
+  nGain.gain.setValueAtTime(0.06, now);
+  nGain.gain.exponentialRampToValueAtTime(0.001, now + 0.02);
+  const hipass = audioCtx.createBiquadFilter();
+  hipass.type = 'highpass'; hipass.frequency.value = 2000;
+  noise.connect(hipass).connect(nGain).connect(audioCtx.destination);
+  noise.start(now); noise.stop(now + 0.025);
+}
+
+// Global keyboard click sound on every keystroke
+document.addEventListener('keydown', e => {
+  if (e.repeat) return;
+  if (['Shift','Control','Alt','Meta','CapsLock','Tab','Escape'].includes(e.key)) return;
+  playTap();
+}, true);
 function playSuccess() {
   [0,0.08,0.16].forEach((t,i) => {
     ensureAudio();
@@ -1272,7 +1305,7 @@ function handleFingerKey(e) {
   const expected = s.sequence[s.current]; const typed = e.key.toLowerCase();
   pressKey(typed);
   if (typed === expected) {
-    s.correct++; s.current++; playTap(); updateFingerHUD(); renderFingerTarget();
+    s.correct++; s.current++; updateFingerHUD(); renderFingerTarget();
     if (s.current >= s.sequence.length) finishFingerLevel();
   } else {
     s.errors++; playError();
@@ -1487,7 +1520,7 @@ function wpGameOver() {
 
 $('wp-type-input').addEventListener('input', () => {
   if (!wp.running || wp.paused) return;
-  const val = $('wp-type-input').value.toLowerCase(); wp.totalKeys++; playTap();
+  const val = $('wp-type-input').value.toLowerCase(); wp.totalKeys++;
   if (!val) {
     wp.words.forEach(w => { w.active=false; w.typed=0; w.el.classList.remove('active');
       w.el.innerHTML = `<span class="remaining">${w.text}</span>`; w.el.style.boxShadow = `0 0 12px ${w.color.border}30`; });
@@ -1612,7 +1645,7 @@ $('race-input').addEventListener('keydown', e => {
   if (!val) { e.preventDefault(); return; }
   e.preventDefault(); ensureWordResults();
   const expected = race.words[race.currentIdx];
-  if (val === expected) { race.correct++; race.wordResults[race.currentIdx] = true; playTap(); }
+  if (val === expected) { race.correct++; race.wordResults[race.currentIdx] = true; }
   else { race.errors++; race.wordResults[race.currentIdx] = false; playError(); }
   race.currentIdx++; $('race-input').value = ''; $('race-input').classList.remove('error');
   if (race.currentIdx >= race.words.length) finishRace();
