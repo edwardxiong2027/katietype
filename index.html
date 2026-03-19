@@ -204,6 +204,10 @@
     .mode-card.lb-mode:hover { box-shadow: 0 8px 40px rgba(181,55,242,0.15); border-color: var(--neon-purple); }
     .mode-card.lb-mode h3 { color: var(--neon-purple); }
 
+    .mode-card.fun-mode { border-color: rgba(107,255,107,0.3); }
+    .mode-card.fun-mode:hover { box-shadow: 0 8px 40px rgba(107,255,107,0.2); border-color: var(--neon-green); }
+    .mode-card.fun-mode h3 { color: var(--neon-green); }
+
     .menu-footer {
       margin-top: 35px; font-size: 0.75rem; opacity: 0.3; text-align: center;
       line-height: 1.8;
@@ -537,6 +541,306 @@
     .history-score { font-family: 'Fredoka One', cursive; color: var(--neon-yellow); font-size: 1.1rem; }
     .history-date { font-size: 0.7rem; opacity: 0.3; }
 
+    /* ══════ FUN ZONE SELECT ══════ */
+    #funzone-select { justify-content: flex-start; padding-bottom: 40px; }
+    .funzone-cards {
+      display: flex; gap: 25px; margin-top: 30px; flex-wrap: wrap;
+      justify-content: center; padding: 0 20px; max-width: 1000px;
+    }
+    .funzone-card {
+      width: 280px; padding: 30px 24px; border-radius: 20px;
+      background: var(--panel-bg); border: 1px solid var(--panel-border);
+      backdrop-filter: blur(10px); cursor: pointer; transition: all 0.3s;
+      text-align: center;
+    }
+    .funzone-card:hover { transform: translateY(-6px); }
+    .funzone-card .fz-icon { font-size: 3rem; margin-bottom: 12px; }
+    .funzone-card h3 { font-family: 'Fredoka One', cursive; font-size: 1.3rem; margin-bottom: 8px; }
+    .funzone-card p { font-size: 0.82rem; opacity: 0.5; line-height: 1.5; }
+    .funzone-card.zombie-card { border-color: rgba(107,255,107,0.3); }
+    .funzone-card.zombie-card:hover { box-shadow: 0 8px 40px rgba(107,255,107,0.2); border-color: var(--neon-green); }
+    .funzone-card.zombie-card h3 { color: var(--neon-green); }
+    .funzone-card.racer-card { border-color: rgba(249,237,105,0.3); }
+    .funzone-card.racer-card:hover { box-shadow: 0 8px 40px rgba(249,237,105,0.2); border-color: var(--neon-yellow); }
+    .funzone-card.racer-card h3 { color: var(--neon-yellow); }
+    .funzone-card.balloon-card { border-color: rgba(255,46,99,0.3); }
+    .funzone-card.balloon-card:hover { box-shadow: 0 8px 40px rgba(255,46,99,0.2); border-color: var(--neon-pink); }
+    .funzone-card.balloon-card h3 { color: var(--neon-pink); }
+
+    /* ══════ ZOMBIE TYPING ══════ */
+    #zombie-game { display: none; position: fixed; inset: 0; z-index: 50;
+      background: linear-gradient(180deg, #050a05 0%, #0a1a0a 60%, #111a08 100%); flex-direction: column; }
+    .zombie-hud {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 20px; background: rgba(0,0,0,0.5); backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(107,255,107,0.15); position: relative; z-index: 60;
+    }
+    .zombie-hud .zh-item { text-align: center; }
+    .zombie-hud .zh-label { font-size: 0.55rem; text-transform: uppercase; letter-spacing: 2px; opacity: 0.4; }
+    .zombie-hud .zh-value { font-family: 'Fredoka One', cursive; font-size: 1.4rem; color: var(--neon-green); }
+    #zombie-area {
+      flex: 1; position: relative; overflow: hidden;
+      background: linear-gradient(180deg, transparent 0%, rgba(0,20,0,0.3) 100%);
+    }
+    .safe-zone-line {
+      position: absolute; left: 80px; top: 0; bottom: 0; width: 3px;
+      background: linear-gradient(180deg, transparent, rgba(255,46,99,0.5), transparent);
+      box-shadow: 0 0 15px rgba(255,46,99,0.3);
+    }
+    .safe-zone-label {
+      position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+      font-size: 0.6rem; color: rgba(255,46,99,0.6); text-transform: uppercase;
+      letter-spacing: 2px; writing-mode: vertical-rl; text-orientation: mixed;
+    }
+    .zombie-entity {
+      position: absolute; display: flex; flex-direction: column; align-items: center;
+      pointer-events: none; transition: none;
+    }
+    .zombie-emoji { font-size: 2.5rem; animation: zombieWalk 0.5s steps(2) infinite; display: block; }
+    @keyframes zombieWalk { 0%,100% { transform: rotate(-5deg) translateY(0); } 50% { transform: rotate(5deg) translateY(-3px); } }
+    .zombie-word {
+      background: rgba(0,0,0,0.75); border: 1px solid rgba(107,255,107,0.5);
+      padding: 3px 10px; border-radius: 20px; font-family: 'Fredoka One', cursive;
+      font-size: 1rem; letter-spacing: 1px; color: var(--neon-green);
+      white-space: nowrap; margin-bottom: 2px; box-shadow: 0 0 8px rgba(107,255,107,0.2);
+    }
+    .zombie-word .zw-typed { opacity: 0.3; }
+    .zombie-word .zw-cur { text-decoration: underline; text-underline-offset: 3px; }
+    .zombie-entity.active .zombie-word {
+      border-color: var(--neon-yellow); color: var(--neon-yellow);
+      box-shadow: 0 0 15px rgba(249,237,105,0.4);
+    }
+    .zombie-explosion {
+      position: absolute; pointer-events: none; z-index: 80;
+      font-size: 2rem; animation: zombieExplode 0.5s ease-out forwards;
+    }
+    @keyframes zombieExplode {
+      0% { transform: scale(0.5); opacity: 1; }
+      50% { transform: scale(2); opacity: 0.8; }
+      100% { transform: scale(3); opacity: 0; }
+    }
+    .zombie-score-popup {
+      position: absolute; pointer-events: none; z-index: 80;
+      font-family: 'Fredoka One', cursive; font-size: 1.2rem; color: var(--neon-yellow);
+      animation: scoreFloat 0.8s ease-out forwards;
+    }
+    @keyframes scoreFloat {
+      0% { transform: translateY(0); opacity: 1; }
+      100% { transform: translateY(-60px); opacity: 0; }
+    }
+    .zombie-wave-banner {
+      position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%);
+      font-family: 'Fredoka One', cursive; font-size: 2.5rem; color: var(--neon-green);
+      pointer-events: none; z-index: 200; animation: levelUp 1.2s ease-out forwards;
+      text-shadow: 0 0 30px var(--neon-green);
+    }
+    .zombie-input-area {
+      padding: 12px 20px; background: rgba(0,0,0,0.5); backdrop-filter: blur(12px);
+      border-top: 1px solid rgba(107,255,107,0.1); position: relative; z-index: 60;
+    }
+    #zombie-type-input {
+      width: 100%; padding: 10px 18px; border: 2px solid rgba(107,255,107,0.3);
+      border-radius: 50px; background: rgba(0,0,0,0.4); color: var(--neon-green);
+      font-family: 'Fredoka One', cursive; font-size: 1.2rem; letter-spacing: 3px;
+      outline: none; transition: all 0.3s;
+    }
+    #zombie-type-input:focus { border-color: var(--neon-green); box-shadow: 0 0 15px rgba(107,255,107,0.2); }
+    #zombie-type-input::placeholder { color: rgba(107,255,107,0.2); letter-spacing: 2px; }
+    .zombie-lives { display: flex; gap: 4px; align-items: center; }
+    .zombie-heart { font-size: 1.2rem; transition: all 0.3s; }
+    .zombie-heart.lost { opacity: 0.15; transform: scale(0.6); }
+
+    /* ══════ TYPE RACER ══════ */
+    #typeracer-game { display: none; position: fixed; inset: 0; z-index: 50;
+      background: linear-gradient(180deg, #050510 0%, #0a0a1a 50%, #0a1028 100%);
+      flex-direction: column; }
+    .typeracer-hud {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 25px; background: rgba(0,0,0,0.4); backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(249,237,105,0.1); z-index: 60; flex-shrink: 0;
+    }
+    .typeracer-hud .th-item { text-align: center; }
+    .typeracer-hud .th-label { font-size: 0.55rem; text-transform: uppercase; letter-spacing: 2px; opacity: 0.4; }
+    .typeracer-hud .th-value { font-family: 'Fredoka One', cursive; font-size: 1.4rem; color: var(--neon-yellow); }
+    .race-track-container {
+      padding: 15px 25px; background: rgba(0,0,0,0.3);
+      border-bottom: 1px solid rgba(255,255,255,0.06); flex-shrink: 0;
+    }
+    .race-track { position: relative; margin-bottom: 10px; }
+    .race-lane {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 8px;
+      height: 40px; position: relative;
+    }
+    .race-lane-label {
+      width: 70px; font-size: 0.75rem; font-weight: 700; text-align: right;
+      flex-shrink: 0;
+    }
+    .race-lane-track {
+      flex: 1; height: 14px; background: rgba(255,255,255,0.05);
+      border-radius: 7px; border: 1px solid rgba(255,255,255,0.08); position: relative;
+      overflow: visible;
+    }
+    .race-car {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      font-size: 1.4rem; line-height: 1; transition: left 0.3s ease;
+      filter: drop-shadow(0 0 8px currentColor);
+    }
+    .race-lane.player-lane .race-lane-label { color: var(--neon-yellow); }
+    .race-lane.ai-lane-1 .race-lane-label { color: var(--neon-pink); }
+    .race-lane.ai-lane-2 .race-lane-label { color: var(--neon-cyan); }
+    .race-lane.ai-lane-3 .race-lane-label { color: rgba(255,255,255,0.4); }
+    .race-finish-line {
+      position: absolute; right: 0; top: 0; bottom: 0; width: 3px;
+      background: repeating-linear-gradient(180deg, white 0px, white 4px, black 4px, black 8px);
+      opacity: 0.5;
+    }
+    .race-position-badge {
+      position: fixed; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Fredoka One', cursive; font-size: 3rem;
+      pointer-events: none; z-index: 200;
+      animation: comboAnim 1s ease-out forwards;
+      text-shadow: 0 0 30px currentColor;
+    }
+    .typeracer-text-area {
+      flex: 1; padding: 20px 25px; overflow-y: auto; max-width: 800px;
+      margin: 0 auto; width: 100%;
+    }
+    .typeracer-text {
+      font-family: 'JetBrains Mono', monospace; font-size: 1.15rem;
+      line-height: 2; letter-spacing: 0.5px; word-spacing: 4px;
+    }
+    .typeracer-text .word { display: inline-block; margin-right: 8px; padding: 2px 0; }
+    .typeracer-text .word.done { color: rgba(255,255,255,0.2); }
+    .typeracer-text .word.done.correct { color: rgba(249,237,105,0.4); }
+    .typeracer-text .word.done.wrong { color: rgba(255,46,99,0.5); text-decoration: line-through; }
+    .typeracer-text .word.current { color: white; background: rgba(249,237,105,0.1); border-radius: 4px; padding: 2px 4px; border-bottom: 2px solid var(--neon-yellow); }
+    .typeracer-text .word.upcoming { color: rgba(255,255,255,0.35); }
+    .typeracer-input-area {
+      padding: 15px 25px; background: rgba(0,0,0,0.4); backdrop-filter: blur(12px);
+      border-top: 1px solid rgba(255,255,255,0.06); flex-shrink: 0;
+    }
+    #typeracer-input {
+      width: 100%; max-width: 800px; margin: 0 auto; display: block;
+      padding: 12px 20px; border: 2px solid rgba(249,237,105,0.3);
+      border-radius: 12px; background: rgba(255,255,255,0.04); color: white;
+      font-family: 'JetBrains Mono', monospace; font-size: 1.1rem;
+      outline: none; transition: all 0.3s;
+    }
+    #typeracer-input:focus { border-color: var(--neon-yellow); box-shadow: 0 0 15px rgba(249,237,105,0.15); }
+    #typeracer-input.error { border-color: var(--neon-pink); }
+    #typeracer-input::placeholder { color: rgba(255,255,255,0.15); }
+
+    /* ══════ BALLOON POP ══════ */
+    #balloon-game { display: none; position: fixed; inset: 0; z-index: 50;
+      background: linear-gradient(180deg, #050520 0%, #0a0a2a 100%);
+      flex-direction: column; }
+    .balloon-hud {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 20px; background: rgba(0,0,0,0.4); backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255,46,99,0.1); z-index: 60; flex-shrink: 0;
+    }
+    .balloon-hud .bh-item { text-align: center; }
+    .balloon-hud .bh-label { font-size: 0.55rem; text-transform: uppercase; letter-spacing: 2px; opacity: 0.4; }
+    .balloon-hud .bh-value { font-family: 'Fredoka One', cursive; font-size: 1.4rem; color: var(--neon-pink); }
+    #balloon-area {
+      flex: 1; position: relative; overflow: hidden;
+    }
+    .balloon-entity {
+      position: absolute; display: flex; flex-direction: column;
+      align-items: center; pointer-events: none; cursor: default;
+      transition: none;
+    }
+    .balloon-string {
+      width: 2px; height: 25px; background: rgba(255,255,255,0.3);
+      margin-top: -2px;
+    }
+    .balloon-body {
+      width: 70px; height: 85px; border-radius: 50% 50% 50% 50% / 45% 45% 55% 55%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Fredoka One', cursive; font-size: 1.2rem;
+      position: relative; box-shadow: inset 0 -5px 15px rgba(0,0,0,0.3), 0 0 20px rgba(255,255,255,0.1);
+      animation: balloonSway 3s ease-in-out infinite;
+    }
+    .balloon-body::after {
+      content: ''; position: absolute; top: 10px; left: 12px;
+      width: 16px; height: 10px; border-radius: 50%;
+      background: rgba(255,255,255,0.35);
+    }
+    @keyframes balloonSway { 0%,100% { transform: rotate(-4deg); } 50% { transform: rotate(4deg); } }
+    .balloon-entity.active .balloon-body {
+      box-shadow: inset 0 -5px 15px rgba(0,0,0,0.3), 0 0 25px currentColor;
+      filter: brightness(1.3);
+    }
+    .balloon-entity.golden .balloon-body {
+      animation: balloonSway 3s ease-in-out infinite, goldenPulse 1s ease-in-out infinite;
+    }
+    @keyframes goldenPulse { 0%,100% { box-shadow: inset 0 -5px 15px rgba(0,0,0,0.3), 0 0 20px rgba(249,237,105,0.5); } 50% { box-shadow: inset 0 -5px 15px rgba(0,0,0,0.3), 0 0 40px rgba(249,237,105,0.9); } }
+    .balloon-pop-burst {
+      position: absolute; pointer-events: none; z-index: 80;
+      animation: burstAnim 0.4s ease-out forwards;
+    }
+    @keyframes burstAnim { 0% { transform: scale(0.5); opacity: 1; } 100% { transform: scale(3); opacity: 0; } }
+    .balloon-input-area {
+      padding: 12px 20px; background: rgba(0,0,0,0.4); backdrop-filter: blur(12px);
+      border-top: 1px solid rgba(255,46,99,0.1); flex-shrink: 0; z-index: 60;
+    }
+    #balloon-type-input {
+      width: 100%; padding: 10px 18px; border: 2px solid rgba(255,46,99,0.3);
+      border-radius: 50px; background: rgba(0,0,0,0.3); color: white;
+      font-family: 'Fredoka One', cursive; font-size: 1.2rem; letter-spacing: 3px;
+      outline: none; transition: all 0.3s;
+    }
+    #balloon-type-input:focus { border-color: var(--neon-pink); box-shadow: 0 0 15px rgba(255,46,99,0.2); }
+    #balloon-type-input::placeholder { color: rgba(255,255,255,0.15); letter-spacing: 2px; }
+    .balloon-diff-select {
+      display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 20px;
+    }
+    .balloon-combo-display {
+      position: absolute; top: 10px; right: 15px; z-index: 70;
+      font-family: 'Fredoka One', cursive; font-size: 1.2rem;
+      color: var(--neon-yellow); opacity: 0;
+      text-shadow: 0 0 15px var(--neon-yellow);
+      transition: opacity 0.3s;
+      pointer-events: none;
+    }
+    .balloon-combo-display.show { opacity: 1; }
+
+    /* Fun Zone game overlays */
+    .funzone-overlay {
+      display: none; position: fixed; inset: 0; z-index: 150;
+      background: rgba(0,0,0,0.85); backdrop-filter: blur(12px);
+      flex-direction: column; align-items: center; justify-content: center; gap: 15px;
+    }
+    .funzone-overlay.active { display: flex; }
+    .funzone-overlay h2 { font-family: 'Fredoka One', cursive; font-size: 3rem; }
+
+    /* Wordpop select redesign */
+    .wordpop-select-split {
+      display: flex; gap: 40px; flex-wrap: wrap; justify-content: center;
+      padding: 0 20px; max-width: 900px; margin-top: 30px;
+    }
+    .wordpop-section {
+      background: var(--panel-bg); border: 1px solid var(--panel-border);
+      border-radius: 20px; padding: 28px 28px; min-width: 280px;
+      backdrop-filter: blur(10px);
+    }
+    .wordpop-section h3 {
+      font-family: 'Fredoka One', cursive; font-size: 1.2rem;
+      margin-bottom: 16px; display: flex; align-items: center; gap: 8px;
+    }
+    .wordpop-section.regular-section { border-color: rgba(255,46,99,0.25); }
+    .wordpop-section.regular-section h3 { color: var(--neon-pink); }
+    .wordpop-section.learning-section {
+      border-color: rgba(181,55,242,0.3);
+      background: rgba(181,55,242,0.04);
+    }
+    .wordpop-section.learning-section h3 { color: var(--neon-purple); }
+    .wordpop-section-desc {
+      font-size: 0.78rem; opacity: 0.4; margin-bottom: 14px; line-height: 1.5;
+    }
+    .wordpop-btn-grid { display: flex; flex-direction: column; gap: 10px; }
+
     /* ── Responsive ── */
     @media (max-width: 700px) {
       .mode-cards { flex-direction: column; align-items: center; }
@@ -620,6 +924,11 @@
       <h3>Paragraph Race</h3>
       <p>Race through full paragraphs. Track your WPM and accuracy in real time.</p>
     </div>
+    <div class="mode-card fun-mode" onclick="showScreen('funzone-select')">
+      <div class="mode-icon">&#127918;</div>
+      <h3>Fun Zone</h3>
+      <p>Exciting typing games! Type to survive zombies, race cars, and pop balloons.</p>
+    </div>
     <div class="mode-card lb-mode" onclick="showScreen('leaderboard-screen'); loadLeaderboard();">
       <div class="mode-icon">&#127942;</div>
       <h3>Leaderboard</h3>
@@ -681,15 +990,29 @@
 <!-- ══════ WORD POP: Select ══════ -->
 <div class="screen" id="wordpop-select">
   <button class="btn btn-pink back-btn" onclick="showScreen('menu')">Back</button>
-  <h2 style="font-family:'Fredoka One',cursive; color:var(--neon-pink); font-size:2rem;">Word Pop</h2>
-  <p style="opacity:0.4; font-size:0.85rem; margin-top:6px;">Choose your difficulty</p>
-  <div class="wp-diff-buttons" style="margin-top:25px;">
-    <button class="btn btn-green" onclick="startWordPop('beginner')">Beginner</button>
-    <button class="btn btn-yellow" onclick="startWordPop('intermediate')">Intermediate</button>
-    <button class="btn btn-orange" onclick="startWordPop('advanced')">Advanced</button>
-    <button class="btn btn-pink" onclick="startWordPop('expert')">Expert</button>
-    <button class="btn btn-purple" onclick="startWordPop('sat')">SAT Vocab</button>
-    <button class="btn btn-cyan" onclick="startWordPop('gre')">GRE Vocab</button>
+  <h2 style="font-family:'Fredoka One',cursive; color:var(--neon-pink); font-size:2rem; margin-top:60px;">Word Pop</h2>
+  <p style="opacity:0.4; font-size:0.85rem; margin-top:6px;">Choose your mode</p>
+
+  <div class="wordpop-select-split">
+    <div class="wordpop-section regular-section">
+      <h3><span>&#9733;</span> Regular Word Pop</h3>
+      <p class="wordpop-section-desc">Type falling words before they hit the bottom. Build combos and climb levels!</p>
+      <div class="wordpop-btn-grid">
+        <button class="btn btn-green" onclick="startWordPop('beginner')">&#127793; Beginner</button>
+        <button class="btn btn-yellow" onclick="startWordPop('intermediate')">&#9889; Intermediate</button>
+        <button class="btn btn-orange" onclick="startWordPop('advanced')">&#128293; Advanced</button>
+        <button class="btn btn-pink" onclick="startWordPop('expert')">&#128081; Expert</button>
+      </div>
+    </div>
+
+    <div class="wordpop-section learning-section">
+      <h3><span>&#128218;</span> Learning Zone</h3>
+      <p class="wordpop-section-desc">Expand your vocabulary with SAT &amp; GRE words. Definitions shown to help you learn!</p>
+      <div class="wordpop-btn-grid">
+        <button class="btn btn-purple" onclick="startWordPop('sat')">&#127891; SAT Vocab</button>
+        <button class="btn btn-cyan" onclick="startWordPop('gre')">&#127979; GRE Vocab</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -795,11 +1118,185 @@
   </div>
 </div>
 
+<!-- ══════ FUN ZONE: Select ══════ -->
+<div class="screen" id="funzone-select">
+  <button class="btn btn-green back-btn" onclick="showScreen('menu')">Back</button>
+  <h2 style="font-family:'Fredoka One',cursive; color:var(--neon-green); margin-top:60px; font-size:2rem;">&#127918; Fun Zone</h2>
+  <p style="opacity:0.4; font-size:0.85rem; margin-top:6px;">Pick a game and have fun!</p>
+  <div class="funzone-cards">
+    <div class="funzone-card zombie-card" onclick="showZombieSelect()">
+      <div class="fz-icon">&#129503;</div>
+      <h3>Zombie Typing</h3>
+      <p>Zombies walk toward you! Type the word on each zombie to blast them. Survive the waves!</p>
+    </div>
+    <div class="funzone-card racer-card" onclick="showTypeRacerStart()">
+      <div class="fz-icon">&#127950;</div>
+      <h3>Type Racer</h3>
+      <p>Race your car against 3 AI opponents. Your typing speed controls how fast you go!</p>
+    </div>
+    <div class="funzone-card balloon-card" onclick="showBalloonSelect()">
+      <div class="fz-icon">&#127880;</div>
+      <h3>Balloon Pop</h3>
+      <p>Colorful balloons float up — type the word to pop them before they escape!</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ ZOMBIE: Select ══════ -->
+<div class="screen" id="zombie-select">
+  <button class="btn btn-green back-btn" onclick="showScreen('funzone-select')">Back</button>
+  <h2 style="font-family:'Fredoka One',cursive; color:var(--neon-green); margin-top:60px; font-size:2rem;">&#129503; Zombie Typing</h2>
+  <p style="opacity:0.4; font-size:0.85rem; margin-top:6px;">Choose word difficulty</p>
+  <div class="wp-diff-buttons" style="margin-top:25px;">
+    <button class="btn btn-green" onclick="startZombieGame('beginner')">&#127793; Beginner</button>
+    <button class="btn btn-yellow" onclick="startZombieGame('intermediate')">&#9889; Intermediate</button>
+    <button class="btn btn-orange" onclick="startZombieGame('advanced')">&#128293; Advanced</button>
+  </div>
+</div>
+
+<!-- ══════ BALLOON: Select ══════ -->
+<div class="screen" id="balloon-select">
+  <button class="btn btn-pink back-btn" onclick="showScreen('funzone-select')">Back</button>
+  <h2 style="font-family:'Fredoka One',cursive; color:var(--neon-pink); margin-top:60px; font-size:2rem;">&#127880; Balloon Pop</h2>
+  <p style="opacity:0.4; font-size:0.85rem; margin-top:6px;">Choose balloon type</p>
+  <div class="wp-diff-buttons" style="margin-top:25px;">
+    <button class="btn btn-cyan" onclick="startBalloonGame('letters')">&#128288; Letters Only</button>
+    <button class="btn btn-pink" onclick="startBalloonGame('words')">&#127774; Short Words</button>
+    <button class="btn btn-purple" onclick="startBalloonGame('mixed')">&#127775; Mixed</button>
+  </div>
+</div>
+
 <!-- ══════ SCORE HISTORY ══════ -->
 <div class="screen" id="history-screen">
   <button class="btn btn-cyan back-btn" onclick="showScreen('menu')">Back</button>
   <h2 style="font-family:'Fredoka One',cursive; color:var(--neon-cyan); margin-top:60px; font-size:1.8rem;">My Scores</h2>
   <div class="history-list" id="history-list"></div>
+</div>
+
+<!-- ══════ ZOMBIE TYPING: Game ══════ -->
+<div id="zombie-game" style="display:none; flex-direction:column;">
+  <div class="zombie-hud">
+    <button class="btn btn-green" style="padding:6px 16px;font-size:0.75rem;" onclick="exitZombieGame()">&#8592; Back</button>
+    <div class="zh-item"><div class="zh-label">Wave</div><div class="zh-value" id="zh-wave">1</div></div>
+    <div class="zh-item"><div class="zh-label">Score</div><div class="zh-value" id="zh-score">0</div></div>
+    <div class="zh-item"><div class="zh-label">Kills</div><div class="zh-value" id="zh-kills" style="color:var(--neon-yellow)">0</div></div>
+    <div class="zh-item"><div class="zh-label">Lives</div><div class="zombie-lives" id="zh-lives"></div></div>
+  </div>
+  <div id="zombie-area">
+    <div class="safe-zone-line"></div>
+    <div class="safe-zone-label">SAFE ZONE</div>
+  </div>
+  <div class="zombie-input-area">
+    <input type="text" id="zombie-type-input" placeholder="type to kill zombies..." autocomplete="off" autocapitalize="off" spellcheck="false">
+  </div>
+</div>
+
+<div class="funzone-overlay" id="zombie-gameover">
+  <h2 style="color:var(--neon-green)">&#129503; Survived!</h2>
+  <div class="final-stats">
+    <div class="stat-box"><div class="stat-val" id="zgo-score">0</div><div class="stat-label">Score</div></div>
+    <div class="stat-box"><div class="stat-val" id="zgo-wave">1</div><div class="stat-label">Wave Reached</div></div>
+    <div class="stat-box"><div class="stat-val" id="zgo-kills">0</div><div class="stat-label">Zombies Killed</div></div>
+    <div class="stat-box"><div class="stat-val" id="zgo-wpm">0</div><div class="stat-label">WPM</div></div>
+  </div>
+  <div style="display:flex; gap:12px;">
+    <button class="btn btn-green" onclick="document.getElementById('zombie-gameover').classList.remove('active'); showScreen('zombie-select'); exitZombieGame();">Menu</button>
+    <button class="btn btn-yellow" onclick="document.getElementById('zombie-gameover').classList.remove('active'); startZombieGame(zg.difficulty);">Play Again</button>
+  </div>
+</div>
+
+<!-- ══════ TYPE RACER: Game ══════ -->
+<div id="typeracer-game" style="display:none; flex-direction:column;">
+  <div class="typeracer-hud">
+    <button class="btn btn-yellow" style="padding:6px 16px;font-size:0.75rem;" onclick="exitTypeRacer()">&#8592; Back</button>
+    <div class="th-item"><div class="th-label">Your WPM</div><div class="th-value" id="tr-wpm">0</div></div>
+    <div class="th-item"><div class="th-label">Position</div><div class="th-value" id="tr-pos" style="color:var(--neon-cyan)">4th</div></div>
+    <div class="th-item"><div class="th-label">Time</div><div class="th-value" id="tr-time" style="color:var(--neon-orange)">0:00</div></div>
+    <div class="th-item"><div class="th-label">Accuracy</div><div class="th-value" id="tr-acc" style="color:var(--neon-green)">100%</div></div>
+  </div>
+  <div class="race-track-container">
+    <div class="race-track">
+      <div class="race-lane player-lane">
+        <div class="race-lane-label">YOU</div>
+        <div class="race-lane-track" id="tr-lane-0">
+          <div class="race-car" id="tr-car-0" style="left:0; color:var(--neon-yellow);">&#127950;</div>
+          <div class="race-finish-line"></div>
+        </div>
+      </div>
+      <div class="race-lane ai-lane-1">
+        <div class="race-lane-label" id="tr-ai-label-1">Speedy</div>
+        <div class="race-lane-track" id="tr-lane-1">
+          <div class="race-car" id="tr-car-1" style="left:0; color:var(--neon-pink);">&#127950;</div>
+          <div class="race-finish-line"></div>
+        </div>
+      </div>
+      <div class="race-lane ai-lane-2">
+        <div class="race-lane-label" id="tr-ai-label-2">Typez</div>
+        <div class="race-lane-track" id="tr-lane-2">
+          <div class="race-car" id="tr-car-2" style="left:0; color:var(--neon-cyan);">&#127950;</div>
+          <div class="race-finish-line"></div>
+        </div>
+      </div>
+      <div class="race-lane ai-lane-3">
+        <div class="race-lane-label" id="tr-ai-label-3">Slow</div>
+        <div class="race-lane-track" id="tr-lane-3">
+          <div class="race-car" id="tr-car-3" style="left:0; color:rgba(255,255,255,0.4);">&#127950;</div>
+          <div class="race-finish-line"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="typeracer-text-area">
+    <div class="typeracer-text" id="typeracer-text"></div>
+  </div>
+  <div class="typeracer-input-area">
+    <input type="text" id="typeracer-input" placeholder="start typing to race..." autocomplete="off" autocapitalize="off" spellcheck="false">
+  </div>
+</div>
+
+<div class="funzone-overlay" id="typeracer-result">
+  <h2 id="tr-result-title" style="color:var(--neon-yellow)">Race Over!</h2>
+  <div class="final-stats">
+    <div class="stat-box"><div class="stat-val" id="trr-wpm">0</div><div class="stat-label">WPM</div></div>
+    <div class="stat-box"><div class="stat-val" id="trr-pos">4th</div><div class="stat-label">Placement</div></div>
+    <div class="stat-box"><div class="stat-val" id="trr-acc">100%</div><div class="stat-label">Accuracy</div></div>
+    <div class="stat-box"><div class="stat-val" id="trr-time">0:00</div><div class="stat-label">Time</div></div>
+  </div>
+  <div style="display:flex; gap:12px;">
+    <button class="btn btn-yellow" onclick="document.getElementById('typeracer-result').classList.remove('active'); exitTypeRacer();">Menu</button>
+    <button class="btn btn-cyan" onclick="document.getElementById('typeracer-result').classList.remove('active'); startTypeRacer();">Race Again</button>
+  </div>
+</div>
+
+<!-- ══════ BALLOON POP: Game ══════ -->
+<div id="balloon-game" style="display:none; flex-direction:column;">
+  <div class="balloon-hud">
+    <button class="btn btn-pink" style="padding:6px 16px;font-size:0.75rem;" onclick="exitBalloonGame()">&#8592; Back</button>
+    <div class="bh-item"><div class="bh-label">Score</div><div class="bh-value" id="bh-score">0</div></div>
+    <div class="bh-item"><div class="bh-label">Combo</div><div class="bh-value" id="bh-combo" style="color:var(--neon-yellow)">x1</div></div>
+    <div class="bh-item"><div class="bh-label">Level</div><div class="bh-value" id="bh-level" style="color:var(--neon-cyan)">1</div></div>
+    <div class="bh-item"><div class="bh-label">Lives</div><div class="zombie-lives" id="bh-lives"></div></div>
+  </div>
+  <div id="balloon-area">
+    <div class="balloon-combo-display" id="balloon-combo-display">x1</div>
+  </div>
+  <div class="balloon-input-area">
+    <input type="text" id="balloon-type-input" placeholder="type to pop balloons..." autocomplete="off" autocapitalize="off" spellcheck="false">
+  </div>
+</div>
+
+<div class="funzone-overlay" id="balloon-gameover">
+  <h2 style="color:var(--neon-pink)">&#127880; Burst!</h2>
+  <div class="final-stats">
+    <div class="stat-box"><div class="stat-val" id="bgo-score">0</div><div class="stat-label">Score</div></div>
+    <div class="stat-box"><div class="stat-val" id="bgo-combo">0</div><div class="stat-label">Best Combo</div></div>
+    <div class="stat-box"><div class="stat-val" id="bgo-popped">0</div><div class="stat-label">Balloons Popped</div></div>
+    <div class="stat-box"><div class="stat-val" id="bgo-level">1</div><div class="stat-label">Level Reached</div></div>
+  </div>
+  <div style="display:flex; gap:12px;">
+    <button class="btn btn-pink" onclick="document.getElementById('balloon-gameover').classList.remove('active'); exitBalloonGame(); showScreen('balloon-select');">Menu</button>
+    <button class="btn btn-cyan" onclick="document.getElementById('balloon-gameover').classList.remove('active'); startBalloonGame(bg.difficulty);">Play Again</button>
+  </div>
 </div>
 
 <!-- Firebase SDKs via reserved Hosting URLs (no API key in source code) -->
@@ -3218,6 +3715,875 @@ new MutationObserver(() => {
 
 document.addEventListener('click', () => {
   if ($('race-game').classList.contains('active') && race.active) $('race-input').focus();
+});
+
+// ══════════════════════════════════════════
+// FUN ZONE NAVIGATION
+// ══════════════════════════════════════════
+function showZombieSelect() { showScreen('zombie-select'); }
+function showTypeRacerStart() { startTypeRacer(); }
+function showBalloonSelect() { showScreen('balloon-select'); }
+
+// ══════════════════════════════════════════
+// ZOMBIE TYPING GAME
+// ══════════════════════════════════════════
+let zg = {};
+
+const ZOMBIE_WORDS = {
+  beginner: WP_WORDS.beginner.filter(w => w.length >= 3 && w.length <= 6),
+  intermediate: WP_WORDS.intermediate.filter(w => w.length >= 5 && w.length <= 9),
+  advanced: WP_WORDS.advanced.filter(w => w.length >= 6 && w.length <= 12),
+};
+
+const WAVE_CONFIG = [
+  { count: 5, speedMult: 1.0 },
+  { count: 7, speedMult: 1.2 },
+  { count: 9, speedMult: 1.4 },
+  { count: 11, speedMult: 1.6 },
+  { count: 13, speedMult: 1.9 },
+  { count: 15, speedMult: 2.2 },
+  { count: 18, speedMult: 2.6 },
+  { count: 20, speedMult: 3.0 },
+];
+
+function startZombieGame(diff) {
+  showScreen(null);
+  const gameDiv = $('zombie-game');
+  gameDiv.style.display = 'flex';
+
+  zg = {
+    running: true, paused: false, difficulty: diff,
+    score: 0, kills: 0, wave: 1, lives: 3, maxLives: 3,
+    zombies: [], frameId: null, lastFrame: performance.now(),
+    waveActive: false, zombiesLeft: 0, spawnQueue: [],
+    spawnTimer: null, totalTyped: 0, totalCorrect: 0,
+    startTime: Date.now(), wpm: 0,
+  };
+
+  // Clear old zombies
+  const area = $('zombie-area');
+  area.querySelectorAll('.zombie-entity').forEach(e => e.remove());
+  area.querySelectorAll('.zombie-explosion').forEach(e => e.remove());
+  area.querySelectorAll('.zombie-score-popup').forEach(e => e.remove());
+
+  renderZombieLives();
+  updateZombieHUD();
+  const input = $('zombie-type-input');
+  input.value = '';
+  input.focus();
+
+  startZombieWave();
+}
+
+function renderZombieLives() {
+  const c = $('zh-lives'); c.innerHTML = '';
+  for (let i = 0; i < zg.maxLives; i++) {
+    const h = document.createElement('span');
+    h.className = 'zombie-heart' + (i >= zg.lives ? ' lost' : '');
+    h.textContent = '\u2764\uFE0F';
+    c.appendChild(h);
+  }
+}
+
+function updateZombieHUD() {
+  $('zh-wave').textContent = zg.wave;
+  $('zh-score').textContent = zg.score.toLocaleString();
+  $('zh-kills').textContent = zg.kills;
+}
+
+function startZombieWave() {
+  const waveIdx = Math.min(zg.wave - 1, WAVE_CONFIG.length - 1);
+  const config = WAVE_CONFIG[waveIdx];
+  zg.waveActive = true;
+  zg.zombiesLeft = config.count;
+
+  // Show wave banner
+  const banner = document.createElement('div');
+  banner.className = 'zombie-wave-banner';
+  banner.textContent = `Wave ${zg.wave}!`;
+  document.body.appendChild(banner);
+  setTimeout(() => banner.remove(), 1200);
+  playSuccess();
+
+  // Schedule spawns
+  const speedMult = config.speedMult;
+  let spawnDelay = 1200;
+  for (let i = 0; i < config.count; i++) {
+    setTimeout(() => {
+      if (!zg.running) return;
+      spawnZombie(speedMult);
+    }, i * spawnDelay + 1500);
+  }
+
+  if (!zg.frameId) {
+    zg.lastFrame = performance.now();
+    zg.frameId = requestAnimationFrame(zombieLoop);
+  }
+}
+
+function pickZombieWord() {
+  const wordList = ZOMBIE_WORDS[zg.difficulty] || ZOMBIE_WORDS.beginner;
+  let word, tries = 0;
+  do {
+    word = wordList[Math.floor(Math.random() * wordList.length)];
+    tries++;
+  } while (tries < 10 && zg.zombies.some(z => z.text === word));
+  return word;
+}
+
+function spawnZombie(speedMult) {
+  if (!zg.running) return;
+  const word = pickZombieWord();
+  const area = $('zombie-area');
+  const rect = area.getBoundingClientRect();
+
+  const el = document.createElement('div');
+  el.className = 'zombie-entity';
+  const topY = 40 + Math.random() * (rect.height - 140);
+
+  el.innerHTML = `
+    <div class="zombie-word"><span class="zw-remaining">${word}</span></div>
+    <span class="zombie-emoji">&#129503;</span>
+  `;
+  el.style.cssText = `left:${rect.width + 60}px; top:${topY}px;`;
+  area.appendChild(el);
+
+  const baseSpeed = zg.difficulty === 'beginner' ? 0.28 : zg.difficulty === 'intermediate' ? 0.42 : 0.6;
+  const speed = baseSpeed * speedMult * (0.85 + Math.random() * 0.3);
+
+  zg.zombies.push({
+    text: word, typed: 0, el, x: rect.width + 60, y: topY,
+    speed, active: false, alive: true
+  });
+}
+
+function updateZombieWordDisplay(z) {
+  const typed = z.text.substring(0, z.typed);
+  const cur = z.text[z.typed] || '';
+  const rest = z.text.substring(z.typed + 1);
+  const wordEl = z.el.querySelector('.zombie-word');
+  if (wordEl) {
+    wordEl.innerHTML = `<span class="zw-typed">${typed}</span><span class="zw-cur">${cur}</span><span class="zw-remaining">${rest}</span>`;
+  }
+  if (z.active) {
+    z.el.classList.add('active');
+  } else {
+    z.el.classList.remove('active');
+    wordEl && (wordEl.innerHTML = `<span class="zw-remaining">${z.text}</span>`);
+  }
+}
+
+function killZombie(z) {
+  const area = $('zombie-area');
+  const rect = area.getBoundingClientRect();
+  const elRect = z.el.getBoundingClientRect();
+  const cx = elRect.left - rect.left + elRect.width / 2;
+  const cy = elRect.top - rect.top + elRect.height / 2;
+
+  // Explosion
+  const exp = document.createElement('div');
+  exp.className = 'zombie-explosion';
+  exp.style.left = (cx - 20) + 'px';
+  exp.style.top = (cy - 20) + 'px';
+  exp.textContent = '&#128165;';
+  area.appendChild(exp);
+  setTimeout(() => exp.remove(), 500);
+
+  // Particles
+  for (let i = 0; i < 8; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const sz = 4 + Math.random() * 6;
+    const colors = ['#6bff6b','#f9ed69','#ff2e63','#08d9d6'];
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    p.style.cssText = `width:${sz}px;height:${sz}px;background:${color};left:${cx}px;top:${cy}px;position:absolute;z-index:90;border-radius:50%;`;
+    area.appendChild(p);
+    const angle = (Math.PI * 2 / 8) * i + Math.random() * 0.5;
+    const vel = 50 + Math.random() * 80;
+    p.animate([
+      { transform: 'translate(0,0) scale(1)', opacity: 1 },
+      { transform: `translate(${Math.cos(angle)*vel}px,${Math.sin(angle)*vel}px) scale(0)`, opacity: 0 }
+    ], { duration: 400, easing: 'ease-out' }).onfinish = () => p.remove();
+  }
+
+  // Score popup
+  const waveMult = zg.wave;
+  const pts = z.text.length * 10 * waveMult;
+  const popup = document.createElement('div');
+  popup.className = 'zombie-score-popup';
+  popup.style.left = cx + 'px'; popup.style.top = (cy - 20) + 'px';
+  popup.textContent = '+' + pts;
+  area.appendChild(popup);
+  setTimeout(() => popup.remove(), 800);
+
+  z.alive = false;
+  z.el.remove();
+  zg.zombies = zg.zombies.filter(x => x !== z);
+  zg.kills++;
+  zg.score += pts;
+
+  const elapsed = (Date.now() - zg.startTime) / 60000;
+  if (elapsed > 0.05) zg.wpm = Math.round(zg.kills / elapsed);
+
+  updateZombieHUD();
+  playPop(500 + zg.kills * 20);
+  $('zombie-type-input').value = '';
+
+  // Check wave complete
+  checkZombieWaveComplete();
+}
+
+function zombieReachSafezone(z) {
+  z.alive = false;
+  z.el.style.transition = 'all 0.3s';
+  z.el.style.opacity = '0';
+  z.el.style.transform = 'scale(1.5)';
+  setTimeout(() => z.el.remove(), 300);
+  zg.zombies = zg.zombies.filter(x => x !== z);
+  zg.lives--;
+  playMiss();
+  renderZombieLives();
+  $('zombie-type-input').value = '';
+  zg.zombies.forEach(z2 => { z2.active = false; updateZombieWordDisplay(z2); });
+
+  if (zg.lives <= 0) {
+    zombieGameOver();
+  }
+  checkZombieWaveComplete();
+}
+
+function checkZombieWaveComplete() {
+  // Count remaining + on-screen zombies
+  // Wave is complete when all spawned zombies are gone (killed or escaped)
+  if (!zg.waveActive) return;
+  // We track using kills + escaped vs zombiesLeft
+  // Actually just check if no zombies on screen AND wave spawning is done
+  // Use a delayed check
+  setTimeout(() => {
+    if (!zg.running) return;
+    if (zg.zombies.length === 0) {
+      zg.waveActive = false;
+      if (zg.lives > 0) {
+        setTimeout(() => {
+          if (!zg.running) return;
+          zg.wave++;
+          updateZombieHUD();
+          startZombieWave();
+        }, 2000);
+      }
+    }
+  }, 500);
+}
+
+function zombieLoop(ts) {
+  if (!zg.running) return;
+  if (zg.paused) { zg.frameId = requestAnimationFrame(zombieLoop); return; }
+  const dt = Math.min(ts - zg.lastFrame, 50);
+  zg.lastFrame = ts;
+
+  for (const z of [...zg.zombies]) {
+    z.x -= z.speed * (dt / 16);
+    z.el.style.left = z.x + 'px';
+    if (z.x < 82) {
+      zombieReachSafezone(z);
+    }
+  }
+  zg.frameId = requestAnimationFrame(zombieLoop);
+}
+
+function zombieGameOver() {
+  zg.running = false;
+  cancelAnimationFrame(zg.frameId);
+  $('zgo-score').textContent = zg.score.toLocaleString();
+  $('zgo-wave').textContent = zg.wave;
+  $('zgo-kills').textContent = zg.kills;
+  $('zgo-wpm').textContent = zg.wpm;
+  $('zombie-gameover').classList.add('active');
+  saveScore('zombie', { score: zg.score, wpm: zg.wpm, accuracy: 0, level: zg.wave, difficulty: zg.difficulty, details: `Wave ${zg.wave} ${zg.kills} kills` });
+  loadMyHistory();
+}
+
+function exitZombieGame() {
+  zg.running = false;
+  cancelAnimationFrame(zg.frameId);
+  $('zombie-type-input').value = '';
+  $('zombie-gameover').classList.remove('active');
+  $('zombie-game').style.display = 'none';
+  // Clean up
+  const area = $('zombie-area');
+  area.querySelectorAll('.zombie-entity').forEach(e => e.remove());
+  showScreen('funzone-select');
+}
+
+$('zombie-type-input').addEventListener('input', () => {
+  if (!zg.running || zg.paused) return;
+  const val = $('zombie-type-input').value.toLowerCase();
+  zg.totalTyped++;
+  if (!val) {
+    zg.zombies.forEach(z => { z.active = false; updateZombieWordDisplay(z); });
+    return;
+  }
+  let best = null, bestLen = 0;
+  for (const z of zg.zombies) {
+    if (z.text.startsWith(val) && val.length > bestLen) {
+      best = z; bestLen = val.length;
+    }
+  }
+  zg.zombies.forEach(z => { z.active = false; updateZombieWordDisplay(z); });
+  if (best) {
+    best.active = true;
+    best.typed = val.length;
+    zg.totalCorrect++;
+    updateZombieWordDisplay(best);
+    if (val === best.text) killZombie(best);
+  }
+});
+
+document.addEventListener('click', () => {
+  if ($('zombie-game').style.display === 'flex' && zg.running) $('zombie-type-input').focus();
+});
+
+// ══════════════════════════════════════════
+// TYPE RACER GAME
+// ══════════════════════════════════════════
+let tr = {};
+const TR_AI_NAMES = ['Speedy', 'Typez', 'Slow Mo'];
+const TR_AI_WPMS = [55, 35, 20]; // words per minute for AI cars
+
+function startTypeRacer() {
+  showScreen(null);
+  const gameDiv = $('typeracer-game');
+  gameDiv.style.display = 'flex';
+
+  // Pick a random easy paragraph
+  const paragraphs = RACE_PARAGRAPHS.easy;
+  const text = paragraphs[Math.floor(Math.random() * paragraphs.length)];
+  const words = text.split(/\s+/);
+
+  tr = {
+    running: true, words, currentIdx: 0,
+    correct: 0, errors: 0, wordResults: {},
+    startTime: null, endTime: null,
+    wpm: 0, finished: false,
+    aiProgress: [0, 0, 0], // fraction 0-1 for each AI
+    aiFinished: [false, false, false],
+    playerProgress: 0, // fraction 0-1
+    frameId: null, lastFrame: performance.now(),
+    totalWords: words.length,
+    prevPosition: 4,
+  };
+
+  // Update AI labels
+  TR_AI_NAMES.forEach((name, i) => {
+    const el = $(`tr-ai-label-${i+1}`);
+    if (el) el.textContent = name;
+  });
+
+  renderTypeRacerText();
+  updateTypeRacerHUD();
+
+  // Reset car positions
+  for (let i = 0; i < 4; i++) {
+    const car = $(`tr-car-${i}`);
+    if (car) car.style.left = '0px';
+  }
+
+  const input = $('typeracer-input');
+  input.value = ''; input.className = ''; input.focus();
+  $('typeracer-result').classList.remove('active');
+}
+
+function renderTypeRacerText() {
+  const container = $('typeracer-text'); container.innerHTML = '';
+  tr.words.forEach((w, i) => {
+    const span = document.createElement('span');
+    span.className = 'word';
+    span.textContent = w;
+    if (i < tr.currentIdx) {
+      span.classList.add('done');
+      span.classList.add(tr.wordResults[i] ? 'correct' : 'wrong');
+    } else if (i === tr.currentIdx) {
+      span.classList.add('current');
+    } else {
+      span.classList.add('upcoming');
+    }
+    container.appendChild(span);
+  });
+  const cur = container.querySelector('.word.current');
+  if (cur) cur.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function updateTypeRacerHUD() {
+  const total = tr.correct + tr.errors;
+  const acc = total > 0 ? Math.round(tr.correct / total * 100) : 100;
+  $('tr-acc').textContent = acc + '%';
+  if (tr.startTime) {
+    const elapsed = (Date.now() - tr.startTime) / 60000;
+    if (elapsed > 0.01) tr.wpm = Math.round(tr.currentIdx / elapsed);
+  }
+  $('tr-wpm').textContent = tr.wpm;
+  if (tr.startTime) {
+    const secs = Math.floor((Date.now() - tr.startTime) / 1000);
+    $('tr-time').textContent = Math.floor(secs/60) + ':' + String(secs%60).padStart(2,'0');
+  }
+  updateCarPositions();
+}
+
+function updateCarPositions() {
+  const trackWidth = getTrackWidth();
+  if (trackWidth <= 0) return;
+
+  tr.playerProgress = tr.currentIdx / tr.totalWords;
+  const playerLeft = Math.min(tr.playerProgress * (trackWidth - 32), trackWidth - 32);
+  const playerCar = $('tr-car-0');
+  if (playerCar) playerCar.style.left = playerLeft + 'px';
+
+  for (let i = 0; i < 3; i++) {
+    const aiLeft = Math.min(tr.aiProgress[i] * (trackWidth - 32), trackWidth - 32);
+    const aiCar = $(`tr-car-${i+1}`);
+    if (aiCar) aiCar.style.left = aiLeft + 'px';
+  }
+
+  // Calculate position (rank)
+  const allProgress = [tr.playerProgress, ...tr.aiProgress];
+  const sorted = [...allProgress].sort((a, b) => b - a);
+  const pos = sorted.indexOf(tr.playerProgress) + 1;
+  const posLabels = ['1st', '2nd', '3rd', '4th'];
+  $('tr-pos').textContent = posLabels[pos - 1] || '4th';
+
+  // Overtake notification
+  if (tr.prevPosition && pos < tr.prevPosition && tr.startTime) {
+    const badge = document.createElement('div');
+    badge.className = 'race-position-badge';
+    badge.style.color = 'var(--neon-yellow)';
+    badge.textContent = posLabels[pos - 1] + '! &#127942;';
+    badge.innerHTML = posLabels[pos - 1] + '! &#127942;';
+    document.body.appendChild(badge);
+    setTimeout(() => badge.remove(), 1000);
+    playSuccess();
+  }
+  tr.prevPosition = pos;
+}
+
+function getTrackWidth() {
+  const lane = $('tr-lane-0');
+  return lane ? lane.getBoundingClientRect().width : 500;
+}
+
+function typeRacerLoop(ts) {
+  if (!tr.running) return;
+  const dt = Math.min(ts - tr.lastFrame, 50);
+  tr.lastFrame = ts;
+
+  if (tr.startTime) {
+    const elapsed = (Date.now() - tr.startTime) / 1000; // seconds
+    // AI progress: words per second
+    for (let i = 0; i < 3; i++) {
+      if (!tr.aiFinished[i]) {
+        const wps = TR_AI_WPMS[i] / 60;
+        tr.aiProgress[i] = Math.min((wps * elapsed) / tr.totalWords, 1);
+        if (tr.aiProgress[i] >= 1) {
+          tr.aiFinished[i] = true;
+        }
+      }
+    }
+    updateTypeRacerHUD();
+  }
+
+  tr.frameId = requestAnimationFrame(typeRacerLoop);
+}
+
+$('typeracer-input').addEventListener('input', () => {
+  if (!tr.running) return;
+  const val = $('typeracer-input').value;
+  const expected = tr.words[tr.currentIdx];
+  if (!tr.startTime) {
+    tr.startTime = Date.now();
+    tr.frameId = requestAnimationFrame(typeRacerLoop);
+  }
+  if (expected.startsWith(val.trim()) || val === '') {
+    $('typeracer-input').classList.remove('error');
+  } else {
+    $('typeracer-input').classList.add('error');
+  }
+});
+
+$('typeracer-input').addEventListener('keydown', e => {
+  if (!tr.running) return;
+  if (e.key === 'Escape') { exitTypeRacer(); return; }
+  if (e.key !== ' ' && e.key !== 'Enter') return;
+  const val = $('typeracer-input').value.trim();
+  if (!val) { e.preventDefault(); return; }
+  e.preventDefault();
+  if (!tr.startTime) {
+    tr.startTime = Date.now();
+    tr.frameId = requestAnimationFrame(typeRacerLoop);
+  }
+  const expected = tr.words[tr.currentIdx];
+  if (val === expected) { tr.correct++; tr.wordResults[tr.currentIdx] = true; }
+  else { tr.errors++; tr.wordResults[tr.currentIdx] = false; playError(); }
+  tr.currentIdx++;
+  $('typeracer-input').value = '';
+  $('typeracer-input').classList.remove('error');
+  if (tr.currentIdx >= tr.totalWords) {
+    finishTypeRacer();
+  } else {
+    renderTypeRacerText();
+    updateTypeRacerHUD();
+  }
+});
+
+function finishTypeRacer() {
+  tr.running = false;
+  tr.finished = true;
+  cancelAnimationFrame(tr.frameId);
+  tr.endTime = Date.now();
+
+  const elapsed = tr.startTime ? (tr.endTime - tr.startTime) / 60000 : 1;
+  const wpm = elapsed > 0 ? Math.round(tr.totalWords / elapsed) : 0;
+  const total = tr.correct + tr.errors;
+  const acc = total > 0 ? Math.round(tr.correct / total * 100) : 100;
+  const secs = tr.startTime ? Math.floor((tr.endTime - tr.startTime) / 1000) : 0;
+  const timeStr = Math.floor(secs/60) + ':' + String(secs%60).padStart(2,'0');
+
+  // Final position
+  tr.playerProgress = 1;
+  const allProgress = [tr.playerProgress, ...tr.aiProgress];
+  const sorted = [...allProgress].sort((a, b) => b - a);
+  const pos = sorted.indexOf(tr.playerProgress) + 1;
+  const posLabels = ['1st &#127942;', '2nd &#129352;', '3rd &#129353;', '4th'];
+
+  $('trr-wpm').textContent = wpm;
+  $('trr-pos').innerHTML = posLabels[pos - 1] || '4th';
+  $('trr-acc').textContent = acc + '%';
+  $('trr-time').textContent = timeStr;
+
+  const titles = ['You Won! &#127942;', 'Runner Up! &#129352;', 'Third Place! &#129353;', 'Keep Practicing!'];
+  const titleEl = $('tr-result-title');
+  titleEl.innerHTML = titles[pos - 1] || 'Finished!';
+  const titleColors = ['var(--neon-yellow)', 'var(--neon-cyan)', 'var(--neon-orange)', 'var(--neon-pink)'];
+  titleEl.style.color = titleColors[pos - 1] || 'var(--neon-pink)';
+
+  $('typeracer-result').classList.add('active');
+  playSuccess();
+
+  saveScore('typeracer', { score: wpm, wpm, accuracy: acc, level: pos, difficulty: 'easy', details: `${pos === 1 ? '1st' : pos === 2 ? '2nd' : pos === 3 ? '3rd' : '4th'} place ${wpm}WPM` });
+  loadMyHistory();
+}
+
+function exitTypeRacer() {
+  tr.running = false;
+  cancelAnimationFrame(tr.frameId);
+  $('typeracer-result').classList.remove('active');
+  $('typeracer-game').style.display = 'none';
+  showScreen('funzone-select');
+}
+
+document.addEventListener('click', () => {
+  if ($('typeracer-game').style.display === 'flex' && tr.running) $('typeracer-input').focus();
+});
+
+// ══════════════════════════════════════════
+// BALLOON POP GAME
+// ══════════════════════════════════════════
+let bg = {};
+
+const BALLOON_LETTERS = 'abcdefghijklmnoprstw'.split('');
+const BALLOON_SHORT_WORDS = [
+  'cat','dog','sun','run','hat','cup','big','red','hot','win','top','sky',
+  'box','car','map','fly','old','new','sit','eat','go','in','up','on',
+  'pop','tap','hit','zip','hop','mix','fun','lot','cut','fit','pat',
+  'bat','bug','nap','wet','dry','fix','dip','jog','log','mop','rub',
+];
+const BALLOON_COLORS = [
+  { body: '#ff2e63', shadow: '#cc0040' },
+  { body: '#08d9d6', shadow: '#009994' },
+  { body: '#f9ed69', shadow: '#c8bb00' },
+  { body: '#6bff6b', shadow: '#00cc00' },
+  { body: '#b537f2', shadow: '#8800cc' },
+  { body: '#ff9a3c', shadow: '#cc6600' },
+  { body: '#ff77aa', shadow: '#cc0055' },
+];
+
+function getBalloonContent(diff) {
+  if (diff === 'letters') {
+    return BALLOON_LETTERS[Math.floor(Math.random() * BALLOON_LETTERS.length)];
+  } else if (diff === 'words') {
+    return BALLOON_SHORT_WORDS[Math.floor(Math.random() * BALLOON_SHORT_WORDS.length)];
+  } else {
+    // mixed
+    return Math.random() < 0.5
+      ? BALLOON_LETTERS[Math.floor(Math.random() * BALLOON_LETTERS.length)]
+      : BALLOON_SHORT_WORDS[Math.floor(Math.random() * BALLOON_SHORT_WORDS.length)];
+  }
+}
+
+function startBalloonGame(diff) {
+  showScreen(null);
+  const gameDiv = $('balloon-game');
+  gameDiv.style.display = 'flex';
+
+  bg = {
+    running: true, difficulty: diff,
+    score: 0, lives: 5, maxLives: 5,
+    combo: 0, maxCombo: 0, level: 1,
+    balloons: [], frameId: null, lastFrame: performance.now(),
+    spawnTimer: null, popped: 0,
+    spawnInterval: diff === 'letters' ? 2200 : diff === 'words' ? 3000 : 2500,
+    baseSpeed: diff === 'letters' ? 0.3 : diff === 'words' ? 0.22 : 0.26,
+    levelTimer: null,
+  };
+
+  const area = $('balloon-area');
+  area.querySelectorAll('.balloon-entity').forEach(e => e.remove());
+
+  renderBalloonLives();
+  updateBalloonHUD();
+
+  const input = $('balloon-type-input');
+  input.value = ''; input.focus();
+  $('balloon-gameover').classList.remove('active');
+
+  // Spawn loop
+  bg.spawnTimer = setInterval(() => {
+    if (!bg.running) return;
+    spawnBalloon();
+  }, bg.spawnInterval);
+
+  // Level up timer
+  bg.levelTimer = setInterval(() => {
+    if (!bg.running) return;
+    bg.level++;
+    bg.baseSpeed *= 1.12;
+    bg.spawnInterval = Math.max(900, bg.spawnInterval * 0.9);
+    clearInterval(bg.spawnTimer);
+    bg.spawnTimer = setInterval(() => {
+      if (!bg.running) return;
+      spawnBalloon();
+    }, bg.spawnInterval);
+    updateBalloonHUD();
+    const banner = document.createElement('div');
+    banner.className = 'level-banner';
+    banner.textContent = `Level ${bg.level}!`;
+    document.body.appendChild(banner);
+    setTimeout(() => banner.remove(), 1200);
+  }, 20000);
+
+  // Spawn initial balloons
+  setTimeout(() => spawnBalloon(), 500);
+  setTimeout(() => spawnBalloon(), 1200);
+
+  bg.frameId = requestAnimationFrame(balloonLoop);
+}
+
+function renderBalloonLives() {
+  const c = $('bh-lives'); c.innerHTML = '';
+  for (let i = 0; i < bg.maxLives; i++) {
+    const h = document.createElement('span');
+    h.className = 'zombie-heart' + (i >= bg.lives ? ' lost' : '');
+    h.textContent = '\u2764\uFE0F';
+    c.appendChild(h);
+  }
+}
+
+function updateBalloonHUD() {
+  $('bh-score').textContent = bg.score.toLocaleString();
+  $('bh-combo').textContent = 'x' + (bg.combo + 1);
+  $('bh-level').textContent = bg.level;
+}
+
+function spawnBalloon() {
+  if (!bg.running) return;
+  const area = $('balloon-area');
+  const rect = area.getBoundingClientRect();
+
+  const isGolden = Math.random() < 0.1;
+  const colorInfo = isGolden
+    ? { body: '#f9ed69', shadow: '#c8a000' }
+    : BALLOON_COLORS[Math.floor(Math.random() * BALLOON_COLORS.length)];
+
+  let text;
+  if (isGolden) {
+    text = bg.difficulty === 'letters' ? 'GOLD' : BALLOON_SHORT_WORDS[Math.floor(Math.random() * BALLOON_SHORT_WORDS.length)];
+  } else {
+    text = getBalloonContent(bg.difficulty);
+  }
+
+  // Don't duplicate active words
+  if (bg.balloons.some(b => b.text === text && b.active)) return;
+
+  const el = document.createElement('div');
+  el.className = 'balloon-entity' + (isGolden ? ' golden' : '');
+
+  const balloonEl = document.createElement('div');
+  balloonEl.className = 'balloon-body';
+  balloonEl.style.background = `radial-gradient(circle at 35% 35%, ${colorInfo.body}ee, ${colorInfo.shadow})`;
+  balloonEl.style.color = 'rgba(0,0,0,0.8)';
+  balloonEl.textContent = text;
+
+  const stringEl = document.createElement('div');
+  stringEl.className = 'balloon-string';
+
+  el.appendChild(balloonEl);
+  el.appendChild(stringEl);
+
+  const x = 30 + Math.random() * (rect.width - 100);
+  const y = rect.height + 80;
+  el.style.cssText = `left:${x}px; top:${y}px;`;
+  area.appendChild(el);
+
+  const speed = bg.baseSpeed * (0.8 + Math.random() * 0.4);
+  bg.balloons.push({ text, el, x, y, speed, active: false, alive: true, golden: isGolden, colorInfo });
+}
+
+function popBalloon(b) {
+  const area = $('balloon-area');
+  const elRect = b.el.getBoundingClientRect();
+  const aRect = area.getBoundingClientRect();
+  const cx = elRect.left - aRect.left + elRect.width / 2;
+  const cy = elRect.top - aRect.top + elRect.height / 2;
+
+  // Burst effect
+  for (let i = 0; i < 10; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const sz = 5 + Math.random() * 8;
+    const r = Math.floor(Math.random() * 256);
+    const g = Math.floor(Math.random() * 256);
+    const col = b.golden ? '#f9ed69' : `hsl(${Math.random()*360},90%,60%)`;
+    p.style.cssText = `width:${sz}px;height:${sz}px;background:${col};left:${cx}px;top:${cy}px;position:absolute;z-index:90;border-radius:50%;`;
+    area.appendChild(p);
+    const angle = (Math.PI * 2 / 10) * i + Math.random() * 0.4;
+    const vel = 60 + Math.random() * 100;
+    p.animate([
+      { transform: 'translate(0,0) scale(1)', opacity: 1 },
+      { transform: `translate(${Math.cos(angle)*vel}px,${Math.sin(angle)*vel}px) scale(0)`, opacity: 0 }
+    ], { duration: 450, easing: 'ease-out' }).onfinish = () => p.remove();
+  }
+
+  bg.combo++;
+  bg.maxCombo = Math.max(bg.maxCombo, bg.combo);
+  bg.popped++;
+  const mult = b.golden ? 3 : 1;
+  const pts = b.text.length * 10 * (1 + bg.combo * 0.15) * mult;
+  bg.score += Math.round(pts);
+
+  // Combo display
+  const cd = $('balloon-combo-display');
+  if (bg.combo >= 2) {
+    cd.textContent = 'x' + bg.combo + (b.golden ? ' &#127947; GOLDEN!' : '');
+    cd.innerHTML = 'x' + bg.combo + (b.golden ? ' &#127775; GOLDEN!' : '!');
+    cd.classList.add('show');
+    clearTimeout(bg._comboHideTimer);
+    bg._comboHideTimer = setTimeout(() => cd.classList.remove('show'), 1200);
+  }
+
+  b.alive = false;
+  b.el.remove();
+  bg.balloons = bg.balloons.filter(x => x !== b);
+  updateBalloonHUD();
+  playPop(400 + bg.combo * 50);
+  if (b.golden) playSuccess();
+  $('balloon-type-input').value = '';
+  bg.balloons.forEach(b2 => { b2.active = false; updateBalloonDisplay(b2); });
+}
+
+function balloonEscape(b) {
+  b.alive = false;
+  b.el.style.opacity = '0';
+  b.el.style.transition = 'opacity 0.3s';
+  setTimeout(() => b.el.remove(), 300);
+  bg.balloons = bg.balloons.filter(x => x !== b);
+  bg.combo = 0;
+  bg.lives--;
+  playMiss();
+  renderBalloonLives();
+  updateBalloonHUD();
+  $('balloon-type-input').value = '';
+  bg.balloons.forEach(b2 => { b2.active = false; updateBalloonDisplay(b2); });
+  if (bg.lives <= 0) balloonGameOver();
+}
+
+function updateBalloonDisplay(b) {
+  const bodyEl = b.el.querySelector('.balloon-body');
+  if (!bodyEl) return;
+  if (b.active) {
+    bodyEl.style.filter = 'brightness(1.4)';
+    bodyEl.style.boxShadow = `0 0 20px ${b.colorInfo.body}`;
+  } else {
+    bodyEl.style.filter = '';
+    bodyEl.style.boxShadow = '';
+  }
+}
+
+function balloonLoop(ts) {
+  if (!bg.running) return;
+  const dt = Math.min(ts - bg.lastFrame, 50);
+  bg.lastFrame = ts;
+
+  const area = $('balloon-area');
+  const aRect = area.getBoundingClientRect();
+
+  for (const b of [...bg.balloons]) {
+    b.y -= b.speed * (dt / 16);
+    b.el.style.top = b.y + 'px';
+    if (b.y < -120) {
+      balloonEscape(b);
+    }
+  }
+  bg.frameId = requestAnimationFrame(balloonLoop);
+}
+
+function balloonGameOver() {
+  bg.running = false;
+  cancelAnimationFrame(bg.frameId);
+  clearInterval(bg.spawnTimer);
+  clearInterval(bg.levelTimer);
+  $('bgo-score').textContent = bg.score.toLocaleString();
+  $('bgo-combo').textContent = 'x' + bg.maxCombo;
+  $('bgo-popped').textContent = bg.popped;
+  $('bgo-level').textContent = bg.level;
+  $('balloon-gameover').classList.add('active');
+  saveScore('balloon', { score: bg.score, wpm: 0, accuracy: 0, level: bg.level, difficulty: bg.difficulty, details: `Lv${bg.level} x${bg.maxCombo} combo` });
+  loadMyHistory();
+}
+
+function exitBalloonGame() {
+  bg.running = false;
+  cancelAnimationFrame(bg.frameId);
+  clearInterval(bg.spawnTimer);
+  clearInterval(bg.levelTimer);
+  $('balloon-type-input').value = '';
+  $('balloon-gameover').classList.remove('active');
+  $('balloon-game').style.display = 'none';
+  const area = $('balloon-area');
+  if (area) area.querySelectorAll('.balloon-entity').forEach(e => e.remove());
+  showScreen('funzone-select');
+}
+
+$('balloon-type-input').addEventListener('input', () => {
+  if (!bg.running) return;
+  const val = $('balloon-type-input').value.toLowerCase();
+  if (!val) {
+    bg.balloons.forEach(b => { b.active = false; updateBalloonDisplay(b); });
+    return;
+  }
+  let best = null, bestLen = 0;
+  for (const b of bg.balloons) {
+    if (b.text.toLowerCase().startsWith(val) && val.length > bestLen) {
+      best = b; bestLen = val.length;
+    }
+  }
+  bg.balloons.forEach(b => { b.active = false; updateBalloonDisplay(b); });
+  if (best) {
+    best.active = true;
+    updateBalloonDisplay(best);
+    if (val.toLowerCase() === best.text.toLowerCase()) popBalloon(best);
+  }
+});
+
+document.addEventListener('click', () => {
+  if ($('balloon-game').style.display === 'flex' && bg.running) $('balloon-type-input').focus();
 });
 </script>
 </body>
