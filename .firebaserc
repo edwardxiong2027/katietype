@@ -1,0 +1,12 @@
+{
+  "projects": {
+    "default": "katie-abcbc"
+  },
+  "targets": {
+    "katie-abcbc": {
+      "hosting": {
+        "typepop": ["typepop"]
+      }
+    }
+  }
+}
