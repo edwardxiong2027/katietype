@@ -794,24 +794,16 @@
   <div class="history-list" id="history-list"></div>
 </div>
 
-<!-- Firebase SDKs (compat for simplicity) -->
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<!-- Firebase SDKs via reserved Hosting URLs (no API key in source code) -->
+<script src="/__/firebase/10.12.0/firebase-app-compat.js"></script>
+<script src="/__/firebase/10.12.0/firebase-auth-compat.js"></script>
+<script src="/__/firebase/10.12.0/firebase-firestore-compat.js"></script>
+<script src="/__/firebase/init.js"></script>
 
 <script>
 // ══════════════════════════════════════════
-// FIREBASE INIT
+// FIREBASE INIT (auto-configured by Firebase Hosting)
 // ══════════════════════════════════════════
-const firebaseConfig = {
-  apiKey: "AIzaSyAFwY7s7sQu6QvMipVrA2g1dYTsrdAKhfQ",
-  authDomain: "katie-abcbc.firebaseapp.com",
-  projectId: "katie-abcbc",
-  storageBucket: "katie-abcbc.firebasestorage.app",
-  messagingSenderId: "343408666084",
-  appId: "1:343408666084:web:24d66adf0ccfb5dbd5d3f1"
-};
-firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
