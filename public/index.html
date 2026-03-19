@@ -962,14 +962,25 @@ async function loadLeaderboard() {
 
   try {
     const start = getPeriodStart(lbPeriod);
-    const sortField = lbMode === 'wordpop' ? 'score' : 'wpm';
 
-    let query = db.collection('scores')
-      .where('gameMode', '==', lbMode)
-      .where('timestamp', '>=', start)
-      .orderBy('timestamp', 'desc');
+    let query;
+    if (lbPeriod === 'all') {
+      // All time: no timestamp filter, sort by score/wpm directly
+      const sortField = lbMode === 'wordpop' ? 'score' : 'wpm';
+      query = db.collection('scores')
+        .where('gameMode', '==', lbMode)
+        .orderBy(sortField, 'desc')
+        .limit(200);
+    } else {
+      // Time-filtered: use gameMode + timestamp composite index
+      query = db.collection('scores')
+        .where('gameMode', '==', lbMode)
+        .where('timestamp', '>=', start)
+        .orderBy('timestamp', 'desc')
+        .limit(500);
+    }
 
-    const snap = await query.limit(200).get();
+    const snap = await query.get();
 
     // Aggregate: best score per user
     const best = {};
@@ -1004,7 +1015,12 @@ async function loadLeaderboard() {
     });
   } catch (e) {
     console.error('Leaderboard error:', e);
-    body.innerHTML = '<tr><td colspan="3" class="lb-empty">Error loading leaderboard</td></tr>';
+    const msg = e.code === 'failed-precondition'
+      ? 'Building index... try again in a minute.'
+      : e.code === 'permission-denied'
+      ? 'Sign in to view the leaderboard.'
+      : 'Error loading leaderboard. Check console.';
+    body.innerHTML = '<tr><td colspan="3" class="lb-empty">' + msg + '</td></tr>';
   }
 }
 
