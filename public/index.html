@@ -624,6 +624,19 @@
       font-family: 'Fredoka One', cursive; font-size: 1.2rem; color: var(--neon-yellow);
       animation: scoreFloat 0.8s ease-out forwards;
     }
+    .zombie-kill-word {
+      position: absolute; pointer-events: none; z-index: 85;
+      font-family: 'Fredoka One', cursive; font-size: 2rem;
+      text-shadow: 0 0 15px currentColor, 0 0 30px currentColor;
+      animation: killWordAnim 1s ease-out forwards;
+      white-space: nowrap; transform: translate(-50%, 0);
+    }
+    @keyframes killWordAnim {
+      0% { transform: translate(-50%, 0) scale(0.3) rotate(-10deg); opacity: 0; }
+      20% { transform: translate(-50%, -10px) scale(1.3) rotate(5deg); opacity: 1; }
+      50% { transform: translate(-50%, -25px) scale(1.1) rotate(-3deg); opacity: 1; }
+      100% { transform: translate(-50%, -60px) scale(0.8) rotate(0deg); opacity: 0; }
+    }
     @keyframes scoreFloat {
       0% { transform: translateY(0); opacity: 1; }
       100% { transform: translateY(-60px); opacity: 0; }
@@ -3765,6 +3778,7 @@ function startZombieGame(diff) {
   area.querySelectorAll('.zombie-entity').forEach(e => e.remove());
   area.querySelectorAll('.zombie-explosion').forEach(e => e.remove());
   area.querySelectorAll('.zombie-score-popup').forEach(e => e.remove());
+  area.querySelectorAll('.zombie-kill-word').forEach(e => e.remove());
 
   renderZombieLives();
   updateZombieHUD();
@@ -3915,6 +3929,17 @@ function killZombie(z) {
   popup.textContent = '+' + pts;
   area.appendChild(popup);
   setTimeout(() => popup.remove(), 800);
+
+  // Random kill word popup
+  const KILL_WORDS = ['SPLAT!','BOOM!','WRECKED!','CRUSHED!','OBLITERATED!','DESTROYED!','KAPOW!','SMASHED!','ANNIHILATED!','REKT!','ELIMINATED!','TERMINATED!','BLASTED!','SQUISHED!','BONK!','YEET!','OWNED!','GG!','TOAST!','DEMOLISHED!','ZAP!','WHAM!','KABOOM!','POW!','NAILED IT!'];
+  const KILL_COLORS = ['#ff2e63','#08d9d6','#f9ed69','#6bff6b','#b537f2','#ff9a3c','#ff77aa','#66ffcc'];
+  const killWord = document.createElement('div');
+  killWord.className = 'zombie-kill-word';
+  killWord.textContent = KILL_WORDS[Math.floor(Math.random() * KILL_WORDS.length)];
+  killWord.style.color = KILL_COLORS[Math.floor(Math.random() * KILL_COLORS.length)];
+  killWord.style.left = cx + 'px'; killWord.style.top = (cy - 50) + 'px';
+  area.appendChild(killWord);
+  setTimeout(() => killWord.remove(), 1000);
 
   z.alive = false;
   z.el.remove();
@@ -4290,10 +4315,14 @@ let bg = {};
 
 const BALLOON_LETTERS = 'abcdefghijklmnoprstw'.split('');
 const BALLOON_SHORT_WORDS = [
-  'cat','dog','sun','run','hat','cup','big','red','hot','win','top','sky',
-  'box','car','map','fly','old','new','sit','eat','go','in','up','on',
-  'pop','tap','hit','zip','hop','mix','fun','lot','cut','fit','pat',
-  'bat','bug','nap','wet','dry','fix','dip','jog','log','mop','rub',
+  'flame','stone','river','plant','light','brave','dream','climb','shine','cloud',
+  'music','dance','train','water','beach','fresh','globe','swing','bloom','frost',
+  'spark','power','candy','magic','ocean','space','tiger','robot','pizza','jumpy',
+  'happy','brush','cream','quick','sleep','house','snake','apple','storm','night',
+  'world','blast','flash','quest','eagle','ghost','pixel','drift','blaze','skull',
+  'tower','laser','comet','atlas','pulse','forge','nexus','orbit','prism','racer',
+  'crown','sword','jewel','chaos','ultra','brave','lunar','solar','rogue','turbo',
+  'ninja','vapor','cyber','delta','omega','alpha','surge','boost','crash','sonic',
 ];
 const BALLOON_COLORS = [
   { body: '#ff2e63', shadow: '#cc0040' },
@@ -4329,8 +4358,8 @@ function startBalloonGame(diff) {
     combo: 0, maxCombo: 0, level: 1,
     balloons: [], frameId: null, lastFrame: performance.now(),
     spawnTimer: null, popped: 0,
-    spawnInterval: diff === 'letters' ? 2200 : diff === 'words' ? 3000 : 2500,
-    baseSpeed: diff === 'letters' ? 0.3 : diff === 'words' ? 0.22 : 0.26,
+    spawnInterval: diff === 'letters' ? 1400 : diff === 'words' ? 1800 : 1600,
+    baseSpeed: diff === 'letters' ? 0.7 : diff === 'words' ? 0.55 : 0.6,
     levelTimer: null,
   };
 
