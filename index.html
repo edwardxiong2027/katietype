@@ -882,7 +882,7 @@
   <div class="user-avatar" id="user-avatar" onclick="toggleUserDropdown()"></div>
   <div class="user-dropdown" id="user-dropdown">
     <div class="user-dropdown-item" onclick="showScreen('history-screen'); closeDropdown();">My Scores</div>
-    <div class="user-dropdown-item" onclick="showScreen('leaderboard-screen'); loadLeaderboard(); closeDropdown();">Leaderboard</div>
+    <div class="user-dropdown-item" onclick="showScreen('leaderboard-screen'); renderDiffTabs(); loadLeaderboard(); closeDropdown();">Leaderboard</div>
     <div class="user-dropdown-item danger" onclick="doSignOut()">Sign Out</div>
   </div>
 </div>
@@ -943,7 +943,7 @@
       <h3>Fun Zone</h3>
       <p>Exciting typing games! Type to survive zombies, race cars, and pop balloons.</p>
     </div>
-    <div class="mode-card lb-mode" onclick="showScreen('leaderboard-screen'); loadLeaderboard();">
+    <div class="mode-card lb-mode" onclick="showScreen('leaderboard-screen'); renderDiffTabs(); loadLeaderboard();">
       <div class="mode-icon">&#127942;</div>
       <h3>Leaderboard</h3>
       <p>See how you rank against other players. Daily, weekly, monthly &amp; all-time.</p>
@@ -1131,11 +1131,11 @@
   <div class="lb-mode-tabs" id="lb-mode-tabs">
     <div class="lb-mode-tab active" data-mode="wordpop" onclick="switchLbMode('wordpop')">Word Pop</div>
     <div class="lb-mode-tab" data-mode="race" onclick="switchLbMode('race')">Race</div>
-    <div class="lb-mode-tab" data-mode="finger" onclick="switchLbMode('finger')">Finger</div>
     <div class="lb-mode-tab" data-mode="zombie" onclick="switchLbMode('zombie')">Zombie</div>
     <div class="lb-mode-tab" data-mode="typeracer" onclick="switchLbMode('typeracer')">Type Racer</div>
     <div class="lb-mode-tab" data-mode="balloon" onclick="switchLbMode('balloon')">Balloon</div>
   </div>
+  <div class="lb-mode-tabs" id="lb-diff-tabs" style="margin-top:8px;"></div>
   <div class="lb-tabs" id="lb-period-tabs">
     <div class="lb-tab active" data-period="daily" onclick="switchLbPeriod('daily')">Today</div>
     <div class="lb-tab" data-period="weekly" onclick="switchLbPeriod('weekly')">This Week</div>
@@ -1463,10 +1463,42 @@ async function saveScore(gameMode, scoreData) {
 // ══════════════════════════════════════════
 let lbMode = 'wordpop';
 let lbPeriod = 'daily';
+let lbDiff = 'all';
+
+const LB_DIFFICULTIES = {
+  wordpop: ['all','beginner','intermediate','advanced','expert','sat','gre'],
+  race: ['all','easy','medium','hard','ai','sat_reading','gre_reading'],
+  zombie: ['all','beginner','intermediate','advanced'],
+  typeracer: ['all'],
+  balloon: ['all','letters','words','mixed'],
+};
+
+const LB_DIFF_LABELS = {
+  all:'All', beginner:'Beginner', intermediate:'Intermediate', advanced:'Advanced',
+  expert:'Expert', sat:'SAT', gre:'GRE', easy:'Easy', medium:'Medium', hard:'Hard',
+  ai:'AI & Tech', sat_reading:'SAT Reading', gre_reading:'GRE Reading',
+  letters:'Letters', words:'Words', mixed:'Mixed',
+};
+
+function renderDiffTabs() {
+  const container = document.getElementById('lb-diff-tabs');
+  const diffs = LB_DIFFICULTIES[lbMode] || ['all'];
+  if (diffs.length <= 1) { container.innerHTML = ''; return; }
+  container.innerHTML = diffs.map(d =>
+    `<div class="lb-mode-tab${d === lbDiff ? ' active' : ''}" data-diff="${d}" onclick="switchLbDiff('${d}')">${LB_DIFF_LABELS[d] || d}</div>`
+  ).join('');
+}
 
 function switchLbMode(mode) {
   lbMode = mode;
-  document.querySelectorAll('.lb-mode-tab').forEach(t => t.classList.toggle('active', t.dataset.mode === mode));
+  lbDiff = 'all';
+  document.querySelectorAll('#lb-mode-tabs .lb-mode-tab').forEach(t => t.classList.toggle('active', t.dataset.mode === mode));
+  renderDiffTabs();
+  loadLeaderboard();
+}
+function switchLbDiff(diff) {
+  lbDiff = diff;
+  document.querySelectorAll('#lb-diff-tabs .lb-mode-tab').forEach(t => t.classList.toggle('active', t.dataset.diff === diff));
   loadLeaderboard();
 }
 function switchLbPeriod(period) {
@@ -1494,14 +1526,14 @@ async function loadLeaderboard() {
     const start = getPeriodStart(lbPeriod);
 
     // Determine the best sort field per game mode
-    const scoreField = ['race','typeracer','finger'].includes(lbMode) ? 'wpm' : 'score';
+    const scoreField = ['race','typeracer'].includes(lbMode) ? 'wpm' : 'score';
 
     let query;
     if (lbPeriod === 'all') {
       query = db.collection('scores')
         .where('gameMode', '==', lbMode)
         .orderBy(scoreField, 'desc')
-        .limit(200);
+        .limit(500);
     } else {
       query = db.collection('scores')
         .where('gameMode', '==', lbMode)
@@ -1512,12 +1544,14 @@ async function loadLeaderboard() {
 
     const snap = await query.get();
 
-    // Aggregate: best score per user
+    // Aggregate: best score per user, filtered by difficulty
     const best = {};
     snap.forEach(doc => {
       const d = doc.data();
+      // Filter by difficulty if not 'all'
+      if (lbDiff !== 'all' && (d.difficulty || '') !== lbDiff) return;
       const key = d.uid;
-      const val = ['race','typeracer','finger'].includes(lbMode) ? (d.wpm || 0) : (d.score || 0);
+      const val = ['race','typeracer'].includes(lbMode) ? (d.wpm || 0) : (d.score || 0);
       if (!best[key] || val > best[key].val) {
         best[key] = { val, name: d.displayName || 'Player', uid: d.uid, details: d.details || '', difficulty: d.difficulty || '' };
       }
@@ -1539,7 +1573,7 @@ async function loadLeaderboard() {
       tr.innerHTML = `
         <td class="lb-rank${rankClass}">${medal}</td>
         <td class="lb-name">${escHtml(entry.name)}</td>
-        <td class="lb-score-val">${entry.val.toLocaleString()}${['race','typeracer','finger'].includes(lbMode) ? ' WPM' : ' pts'}</td>
+        <td class="lb-score-val">${entry.val.toLocaleString()}${['race','typeracer'].includes(lbMode) ? ' WPM' : ' pts'}</td>
       `;
       body.appendChild(tr);
     });
