@@ -2754,20 +2754,38 @@ const FINGER_LABELS = {
   rindex:'Right Index', rmiddle:'Right Middle', rring:'Right Ring', rpinky:'Right Pinky',
 };
 const FINGER_LEVELS = [
-  { name: 'Home Row Starters', desc: 'Index fingers on home row', keys: ['f','j'] },
-  { name: 'Right Index', desc: 'y h n u j m', keys: ['y','h','n','u','j','m'] },
-  { name: 'Left Index', desc: 't g b r f v', keys: ['t','g','b','r','f','v'] },
-  { name: 'Right Middle', desc: 'i k', keys: ['i','k'] },
-  { name: 'Left Middle', desc: 'e d c', keys: ['e','d','c'] },
-  { name: 'Right Ring', desc: 'o l', keys: ['o','l'] },
-  { name: 'Left Ring', desc: 'w s x', keys: ['w','s','x'] },
-  { name: 'Right Pinky', desc: 'p ; /', keys: ['p',';','/'] },
-  { name: 'Left Pinky', desc: 'q a z', keys: ['q','a','z'] },
-  { name: 'Left Hand', desc: 'All left-hand keys', keys: ['q','a','z','w','s','x','e','d','c','r','f','v','t','g','b'] },
-  { name: 'Right Hand', desc: 'All right-hand keys', keys: ['y','h','n','u','j','m','i','k','o','l','p'] },
-  { name: 'Full Keyboard', desc: 'All keys combined', keys: ['q','a','z','w','s','x','e','d','c','r','f','v','t','g','b','y','h','n','u','j','m','i','k','o','l','p',';','/'] },
+  // Phase 1: Home row build-up
+  { name: 'Home Row Start', desc: 'f j — index fingers meet', keys: ['f','j'], count: 20 },
+  { name: 'Home Row Core', desc: 'd f j k — add middle fingers', keys: ['d','f','j','k'], count: 25 },
+  { name: 'Home Row Expand', desc: 's d f j k l — add ring fingers', keys: ['s','d','f','j','k','l'], count: 25 },
+  { name: 'Full Home Row', desc: 'a s d f j k l ; — all 8 fingers', keys: ['a','s','d','f','j','k','l',';'], count: 30 },
+  // Phase 2: Single finger deep practice
+  { name: 'Left Index Column', desc: 'r f v t g b', keys: ['r','f','v','t','g','b'], count: 30 },
+  { name: 'Right Index Column', desc: 'u j m y h n', keys: ['u','j','m','y','h','n'], count: 30 },
+  { name: 'Left Middle Column', desc: 'e d c', keys: ['e','d','c'], count: 25 },
+  { name: 'Right Middle Column', desc: 'i k ,', keys: ['i','k',','], count: 25 },
+  { name: 'Left Ring Column', desc: 'w s x', keys: ['w','s','x'], count: 25 },
+  { name: 'Right Ring Column', desc: 'o l .', keys: ['o','l','.'], count: 25 },
+  { name: 'Left Pinky Column', desc: 'q a z', keys: ['q','a','z'], count: 25 },
+  { name: 'Right Pinky Column', desc: 'p ; /', keys: ['p',';','/'], count: 25 },
+  // Phase 3: Two-finger combos
+  { name: 'Both Index Fingers', desc: 'r f v t g b + u j m y h n', keys: ['r','f','v','t','g','b','u','j','m','y','h','n'], count: 35 },
+  { name: 'Both Middle Fingers', desc: 'e d c + i k ,', keys: ['e','d','c','i','k',','], count: 30 },
+  { name: 'Both Ring Fingers', desc: 'w s x + o l .', keys: ['w','s','x','o','l','.'], count: 30 },
+  { name: 'Both Pinky Fingers', desc: 'q a z + p ; /', keys: ['q','a','z','p',';','/'], count: 30 },
+  // Phase 4: Progressive hand combos
+  { name: 'Left Index + Middle', desc: 'e d c + r f v t g b', keys: ['e','d','c','r','f','v','t','g','b'], count: 35 },
+  { name: 'Right Index + Middle', desc: 'i k , + u j m y h n', keys: ['i','k',',','u','j','m','y','h','n'], count: 35 },
+  { name: 'Left 3 Fingers', desc: 'w s x + e d c + r f v t g b', keys: ['w','s','x','e','d','c','r','f','v','t','g','b'], count: 35 },
+  { name: 'Right 3 Fingers', desc: 'o l . + i k , + u j m y h n', keys: ['o','l','.','i','k',',','u','j','m','y','h','n'], count: 35 },
+  { name: 'Left Hand All', desc: 'All left-hand keys', keys: ['q','a','z','w','s','x','e','d','c','r','f','v','t','g','b'], count: 40 },
+  { name: 'Right Hand All', desc: 'All right-hand keys', keys: ['y','h','n','u','j','m','i','k',',','o','l','.','p',';','/'], count: 40 },
+  // Phase 5: Full keyboard mastery
+  { name: 'Home + Top Row', desc: 'Home row + q w e r t y u i o p', keys: ['a','s','d','f','j','k','l',';','q','w','e','r','t','y','u','i','o','p'], count: 40 },
+  { name: 'Home + Bottom Row', desc: 'Home row + z x c v b n m , . /', keys: ['a','s','d','f','j','k','l',';','z','x','c','v','b','n','m',',','.','/'], count: 40 },
+  { name: 'Full Keyboard', desc: 'All keys combined', keys: ['q','a','z','w','s','x','e','d','c','r','f','v','t','g','b','y','h','n','u','j','m','i','k',',','o','l','.','p',';','/'], count: 45 },
+  { name: 'Speed Drill', desc: 'All keys — 60 chars, go fast!', keys: ['q','a','z','w','s','x','e','d','c','r','f','v','t','g','b','y','h','n','u','j','m','i','k',',','o','l','.','p',';','/'], count: 60 },
 ];
-const TOTAL_PER_LEVEL = 30;
 
 function getFingerProgress() {
   try { return JSON.parse(localStorage.getItem('typepop_finger') || '{}'); } catch { return {}; }
@@ -2868,7 +2886,8 @@ function getFingerColor(finger) {
 function startFingerLevel(levelIdx) {
   showScreen('finger-screen'); buildKeyboard();
   const lvl = FINGER_LEVELS[levelIdx];
-  fingerState = { levelIdx, sequence: generateFingerSequence(lvl.keys, TOTAL_PER_LEVEL), current: 0, correct: 0, errors: 0, startTime: null, active: true };
+  const charCount = lvl.count || 30;
+  fingerState = { levelIdx, charCount, sequence: generateFingerSequence(lvl.keys, charCount), current: 0, correct: 0, errors: 0, startTime: null, active: true };
   updateKeyboardForLevel(lvl.keys);
   $('fh-level').textContent = levelIdx + 1;
   $('finger-level-name').textContent = lvl.name;
@@ -2883,8 +2902,9 @@ function updateFingerHUD() {
   let speed = 0;
   if (s.startTime && s.current > 0) { const elapsed = (Date.now() - s.startTime) / 60000; speed = Math.round(s.current / elapsed); }
   $('fh-speed').textContent = speed;
-  $('fh-progress').textContent = `${s.current}/${TOTAL_PER_LEVEL}`;
-  $('finger-progress-fill').style.width = (s.current / TOTAL_PER_LEVEL * 100) + '%';
+  const total2 = s.charCount || 30;
+  $('fh-progress').textContent = `${s.current}/${total2}`;
+  $('finger-progress-fill').style.width = (s.current / total2 * 100) + '%';
 }
 
 function handleFingerKey(e) {
@@ -2921,8 +2941,7 @@ function finishFingerLevel() {
   $('finger-complete').classList.add('active');
   if (passed) playSuccess(); else playMiss();
 
-  // Save score
-  saveScore('finger', { score: speed, wpm: speed, accuracy: acc, level: s.levelIdx + 1, difficulty: FINGER_LEVELS[s.levelIdx].name, details: `Level ${s.levelIdx+1}` });
+  // Finger training is practice — no leaderboard save
 }
 
 function retryFingerLevel() { $('finger-complete').classList.remove('active'); startFingerLevel(fingerState.levelIdx); }
