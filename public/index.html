@@ -1187,7 +1187,7 @@
   </div>
   <div class="lb-table-container">
     <table class="lb-table" id="lb-table">
-      <thead><tr><th>#</th><th>Player</th><th style="text-align:right">Score</th></tr></thead>
+      <thead><tr><th>#</th><th>Player</th><th style="text-align:right">WPM</th><th style="text-align:right">Acc</th><th style="text-align:right">Rating</th></tr></thead>
       <tbody id="lb-body"></tbody>
     </table>
   </div>
@@ -1560,15 +1560,27 @@ function getPeriodStart(period) {
   return new Date(2000, 0, 1); // all time
 }
 
+// Combined rating: WPM * (accuracy/100)^2 for WPM modes, score * (accuracy/100)^2 for point modes
+function calcRating(wpm, score, accuracy, isWpmMode) {
+  const base = isWpmMode ? wpm : score;
+  const accFactor = (accuracy / 100) * (accuracy / 100);
+  return Math.round(base * accFactor * 10) / 10;
+}
+
 async function loadLeaderboard() {
   const body = document.getElementById('lb-body');
-  body.innerHTML = '<tr><td colspan="3" class="lb-loading">Loading...</td></tr>';
+  body.innerHTML = '<tr><td colspan="5" class="lb-loading">Loading...</td></tr>';
+  const isWpmMode = ['race','typeracer'].includes(lbMode);
+
+  // Update table header dynamically
+  const thead = document.querySelector('#lb-table thead tr');
+  thead.innerHTML = isWpmMode
+    ? '<th>#</th><th>Player</th><th style="text-align:right">WPM</th><th style="text-align:right">Acc</th><th style="text-align:right">Rating</th>'
+    : '<th>#</th><th>Player</th><th style="text-align:right">Score</th><th style="text-align:right">Acc</th><th style="text-align:right">Rating</th>';
 
   try {
     const start = getPeriodStart(lbPeriod);
-
-    // Determine the best sort field per game mode
-    const scoreField = ['race','typeracer'].includes(lbMode) ? 'wpm' : 'score';
+    const scoreField = isWpmMode ? 'wpm' : 'score';
 
     let query;
     if (lbPeriod === 'all') {
@@ -1586,23 +1598,25 @@ async function loadLeaderboard() {
 
     const snap = await query.get();
 
-    // Aggregate: best score per user, filtered by difficulty
+    // Aggregate: best rating per user, filtered by difficulty
     const best = {};
     snap.forEach(doc => {
       const d = doc.data();
-      // Filter by difficulty if not 'all'
       if (lbDiff !== 'all' && (d.difficulty || '') !== lbDiff) return;
+      const wpm = d.wpm || 0;
+      const score = d.score || 0;
+      const acc = d.accuracy || 0;
+      const rating = calcRating(wpm, score, acc, isWpmMode);
       const key = d.uid;
-      const val = ['race','typeracer'].includes(lbMode) ? (d.wpm || 0) : (d.score || 0);
-      if (!best[key] || val > best[key].val) {
-        best[key] = { val, name: d.displayName || 'Player', uid: d.uid, details: d.details || '', difficulty: d.difficulty || '' };
+      if (!best[key] || rating > best[key].rating) {
+        best[key] = { rating, wpm, score, acc, name: d.displayName || 'Player', uid: d.uid };
       }
     });
 
-    const sorted = Object.values(best).sort((a, b) => b.val - a.val).slice(0, 50);
+    const sorted = Object.values(best).sort((a, b) => b.rating - a.rating).slice(0, 50);
 
     if (sorted.length === 0) {
-      body.innerHTML = '<tr><td colspan="3" class="lb-empty">No scores yet. Be the first!</td></tr>';
+      body.innerHTML = '<tr><td colspan="5" class="lb-empty">No scores yet. Be the first!</td></tr>';
       return;
     }
 
@@ -1612,10 +1626,14 @@ async function loadLeaderboard() {
       if (currentUser && entry.uid === currentUser.uid) tr.className = 'me';
       const rankClass = i < 3 ? ` lb-rank-${i+1}` : '';
       const medal = i === 0 ? '&#129351;' : i === 1 ? '&#129352;' : i === 2 ? '&#129353;' : (i+1);
+      const mainVal = isWpmMode ? entry.wpm : entry.score.toLocaleString();
+      const mainUnit = isWpmMode ? ' WPM' : ' pts';
       tr.innerHTML = `
         <td class="lb-rank${rankClass}">${medal}</td>
         <td class="lb-name">${escHtml(entry.name)}</td>
-        <td class="lb-score-val">${entry.val.toLocaleString()}${['race','typeracer'].includes(lbMode) ? ' WPM' : ' pts'}</td>
+        <td class="lb-score-val">${mainVal}${mainUnit}</td>
+        <td class="lb-score-val" style="opacity:0.7">${entry.acc}%</td>
+        <td class="lb-score-val" style="color:var(--neon-yellow)">${entry.rating}</td>
       `;
       body.appendChild(tr);
     });
@@ -1626,7 +1644,7 @@ async function loadLeaderboard() {
       : e.code === 'permission-denied'
       ? 'Sign in to view the leaderboard.'
       : 'Error loading leaderboard. Check console.';
-    body.innerHTML = '<tr><td colspan="3" class="lb-empty">' + msg + '</td></tr>';
+    body.innerHTML = '<tr><td colspan="5" class="lb-empty">' + msg + '</td></tr>';
   }
 }
 
