@@ -2676,7 +2676,10 @@ function showScreen(id) {
 // Audio
 const AudioCtx = window.AudioContext || window.webkitAudioContext;
 let audioCtx;
-function ensureAudio() { if (!audioCtx) audioCtx = new AudioCtx(); }
+function ensureAudio() {
+  if (!audioCtx) audioCtx = new AudioCtx();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
 function playTone(freq, dur, type = 'sine', vol = 0.1) {
   ensureAudio();
   const o = audioCtx.createOscillator(), g = audioCtx.createGain();
@@ -4241,10 +4244,26 @@ document.addEventListener('click', () => {
 // TYPE RACER GAME
 // ══════════════════════════════════════════
 let tr = {};
-const TR_AI_NAMES = ['Speedy', 'Typez', 'Slow Mo'];
-const TR_AI_WPMS = [55, 35, 20]; // words per minute for AI cars
+const TR_AI_NAME_POOL = ['Speedy','Typez','Turbo','Nitro','Blaze','Dash','Flash','Bolt','Zippy','Rocket','Sonic','Vroom','Drift','Racer','Piston'];
+let TR_AI_NAMES = ['Speedy','Typez','Slow Mo'];
+let TR_AI_WPMS = [55, 35, 20];
+function randomizeAI() {
+  // Shuffle name pool and pick 3
+  const names = [...TR_AI_NAME_POOL].sort(() => Math.random() - 0.5).slice(0, 3);
+  TR_AI_NAMES = names;
+  // Random speeds: fast (40-70), medium (25-50), slow (12-30) with some variance
+  const speeds = [
+    Math.round(40 + Math.random() * 30),
+    Math.round(25 + Math.random() * 25),
+    Math.round(12 + Math.random() * 18)
+  ];
+  // Small chance (~15%) one AI is a ringer (70-90 WPM)
+  if (Math.random() < 0.15) speeds[0] = Math.round(70 + Math.random() * 20);
+  TR_AI_WPMS = speeds.sort((a, b) => b - a);
+}
 
 function startTypeRacer() {
+  randomizeAI();
   showScreen(null);
   const gameDiv = $('typeracer-game');
   gameDiv.style.display = 'flex';
